@@ -358,12 +358,11 @@
         <p>Manage job postings, review candidates, and search talent - All in one place</p>
     </div>
     
-    <div class="tabs">
-        <div class="tab active" onclick="showTab('search')">🔍 Search Candidates</div>
-        <div class="tab" onclick="showTab('create-job')">📝 Create Job Posting</div>
-        <div class="tab" onclick="showTab('links')">🔗 Application Forms</div>
-        <div class="tab" onclick="showTab('sheets')">📊 View All Data</div>
-    </div>
+    <div class="tab active" onclick="showTab('search', this)">🔍 Search Candidates</div>
+<div class="tab" onclick="showTab('create-job', this)">📝 Create Job Posting</div>
+<div class="tab" onclick="showTab('links', this)">🔗 Application Forms</div>
+<div class="tab" onclick="showTab('sheets', this)">📊 View All Data</div>
+
     
     <!-- SEARCH TAB -->
     <div id="search-tab" class="content active">
