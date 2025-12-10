@@ -650,63 +650,52 @@ document.addEventListener('DOMContentLoaded', () => {
                         message.innerHTML = '<strong>No candidates found</strong><br>Try adjusting your search criteria.';
                     } else {
                         // Display results
-                        results.innerHTML = data.results.map(candidate => `
-                            <div class="candidate-card">
-                                <div class="candidate-header">
-                                    <div>
-                                        <div class="candidate-name">${candidate.name || 'N/A'}</div>
-                                        <div class="candidate-role">${candidate.current_role || 'Not specified'} at ${candidate.current_company || 'N/A'}</div>
-                                    </div>
-                                    <div class="candidate-badge">${candidate.status || 'New'}</div>
-                                </div>
-                                
-                                <div class="candidate-details">
-                                    <div class="detail-item">
-                                        <div class="detail-label">📧 Email</div>
-                                        <div class="detail-value">${candidate.email || 'N/A'}</div>
-                                    </div>
-                                    <div class="detail-item">
-                                        <div class="detail-label">📞 Phone</div>
-                                        <div class="detail-value">${candidate.phone || 'N/A'}</div>
-                                    </div>
-                                    <div class="detail-item">
-                                        <div class="detail-label">📍 Location</div>
-                                        <div class="detail-value">${candidate.location || 'N/A'}</div>
-                                    </div>
-                                    <div class="detail-item">
-                                        <div class="detail-label">💼 Experience</div>
-                                        <div class="detail-value">${candidate.total_experience || 0} years</div>
-                                    </div>
-                                    <div class="detail-item">
-                                        <div class="detail-label">🎓 Education</div>
-                                        <div class="detail-value">${candidate.education || 'N/A'}</div>
-                                    </div>
-                                    <div class="detail-item">
-                                        <div class="detail-label">📅 Applied</div>
-                                        <div class="detail-value">${candidate.applied_date || 'N/A'}</div>
-                                    </div>
-                                </div>
-                                
-                                ${candidate.skills ? `
-                                    <div style="margin-top: 15px;">
-                                        <div class="detail-label">🛠️ Skills</div>
-                                        <div class="skills-tags">
-                                            ${candidate.skills.split(',').slice(0, 10).map(skill => 
-                                                `<span class="skill-tag">${skill.trim()}</span>`
-                                            ).join('')}
-                                        </div>
-                                    </div>
-                                ` : ''}
-                                
-                                <div class="actions">
-                                    ${candidate.resume_link ? 
-                                        `<button class="btn-small" onclick="window.open('${candidate.resume_link}', '_blank')">📄 View Resume</button>` 
-                                        : '<button class="btn-small" disabled>No Resume</button>'
-                                    }
-                                    <button class="btn-small btn-secondary" onclick="copyEmail('${candidate.email}')">📋 Copy Email</button>
-                                </div>
-                            </div>
-                        `).join('');
+                        results.innerHTML = data.results.map(candidate => {
+    const skillsHTML = candidate.skills
+        ? candidate.skills.split(',').slice(0, 10).map(skill =>
+            `<span class="skill-tag">${skill.trim()}</span>`
+          ).join('')
+        : '';
+
+    return `
+        <div class="candidate-card">
+
+            <div class="candidate-header">
+                <div>
+                    <div class="candidate-name">${candidate.name || 'N/A'}</div>
+                    <div class="candidate-role">${candidate.current_role || 'Not specified'} at ${candidate.current_company || 'N/A'}</div>
+                </div>
+                <div class="candidate-badge">${candidate.status || 'New'}</div>
+            </div>
+
+            <div class="candidate-details">
+                <div class="detail-item"><div class="detail-label">Email</div>${candidate.email || 'N/A'}</div>
+                <div class="detail-item"><div class="detail-label">Phone</div>${candidate.phone || 'N/A'}</div>
+                <div class="detail-item"><div class="detail-label">Location</div>${candidate.location || 'N/A'}</div>
+                <div class="detail-item"><div class="detail-label">Experience</div>${candidate.total_experience || 0} years</div>
+                <div class="detail-item"><div class="detail-label">Applied</div>${candidate.applied_date || 'N/A'}</div>
+                <div class="detail-item"><div class="detail-label">Education</div>${candidate.education || 'N/A'}</div>
+            </div>
+
+            ${skillsHTML ? `
+                <div style="margin-top: 15px;">
+                    <div class="detail-label">Skills</div>
+                    <div class="skills-tags">${skillsHTML}</div>
+                </div>
+            ` : ''}
+
+            <div class="actions">
+                ${candidate.resume_link 
+                    ? `<button class="btn-small" onclick="window.open('${candidate.resume_link}', '_blank')">View Resume</button>` 
+                    : `<button class="btn-small" disabled>No Resume</button>`
+                }
+                <button class="btn-small btn-secondary" onclick="copyEmail('${candidate.email}')">Copy Email</button>
+            </div>
+
+        </div>
+    `;
+}).join('');
+
                         
                         // Add export button
                         const exportBtn = document.createElement('button');
