@@ -1,796 +1,391 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HR Recruitment Dashboard</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        .header {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        
-        .header h1 {
-            color: #333;
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-        
-        .header p {
-            color: #666;
-        }
-        
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        
-        .tab {
-            background: white;
-            padding: 15px 30px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 600;
-            color: #666;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        
-        .tab:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-        
-        .tab.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-        
-        .content {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            display: none;
-        }
-        
-        .content.active {
-            display: block;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 600;
-            font-size: 14px;
-        }
-        
-        input, textarea, select {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 15px;
-            transition: all 0.3s;
-            font-family: inherit;
-        }
-        
-        input:focus, textarea:focus, select:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-        
-        textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-        
-        .row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-        
-        button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 14px 28px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
-        }
-        
-        button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .results {
-            margin-top: 30px;
-            max-height: 500px;
-            overflow-y: auto;
-        }
-        
-        .candidate-card {
-            background: #f8f9fa;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 15px;
-            transition: all 0.3s;
-        }
-        
-        .candidate-card:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            transform: translateY(-2px);
-        }
-        
-        .candidate-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 15px;
-        }
-        
-        .candidate-name {
-            font-size: 20px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 5px;
-        }
-        
-        .candidate-role {
-            color: #666;
-            font-size: 14px;
-        }
-        
-        .candidate-badge {
-            background: #667eea;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        
-        .candidate-details {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-        
-        .detail-item {
-            font-size: 14px;
-        }
-        
-        .detail-label {
-            color: #666;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-        
-        .detail-value {
-            color: #333;
-        }
-        
-        .skills-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 8px;
-        }
-        
-        .skill-tag {
-            background: #e3f2fd;
-            color: #1976d2;
-            padding: 4px 12px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        
-        .actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-        
-        .btn-small {
-            padding: 8px 16px;
-            font-size: 14px;
-        }
-        
-        .btn-secondary {
-            background: #6c757d;
-        }
-        
-        .message {
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
-            display: none;
-        }
-        
-        .success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        
-        .error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        
-        .info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
-        }
-        
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-        
-        .stat-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-        }
-        
-        .stat-value {
-            font-size: 32px;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-        
-        .stat-label {
-            font-size: 14px;
-            opacity: 0.9;
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 40px;
-            display: none;
-        }
-        
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .export-btn {
-            background: #28a745;
-        }
-        
-        .links {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            margin-top: 20px;
-        }
-        
-        .link-card {
-            flex: 1;
-            min-width: 250px;
-            background: #f8f9fa;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 20px;
-            text-align: center;
-            transition: all 0.3s;
-        }
-        
-        .link-card:hover {
-            border-color: #667eea;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
-        }
-        
-        .link-card h3 {
-            color: #333;
-            margin-bottom: 10px;
-        }
-        
-        .link-card a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 600;
-        }
-        
-        .required {
-            color: #e74c3c;
-        }
-    </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>HR Recruitment Dashboard</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial; background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;padding:20px;color:#222}
+  .container{max-width:1200px;margin:0 auto}
+  .header{background:#fff;padding:18px;border-radius:12px;margin-bottom:18px;box-shadow:0 6px 18px rgba(0,0,0,.08)}
+  .header h1{font-size:24px}
+  .tabs{display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+  .tab{background:#fff;padding:12px 18px;border-radius:10px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.06);font-weight:600;color:#444}
+  .tab.active{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff}
+  .content{background:#fff;padding:22px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.06);display:none}
+  .content.active{display:block}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  label{display:block;margin-bottom:6px;font-weight:600;color:#333}
+  input,textarea,select{width:100%;padding:10px;border:1px solid #e6e6e6;border-radius:8px;font-size:14px}
+  button{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;border:none;padding:10px 16px;border-radius:8px;cursor:pointer;font-weight:700}
+  .links{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}
+  .link-card{background:#f8f9fa;padding:14px;border-radius:8px;flex:1;min-width:220px;border:1px solid #e9e9e9;text-align:center}
+  .results{margin-top:18px;display:grid;gap:14px}
+  .candidate-card{background:#fff;border:1px solid #eee;border-radius:10px;padding:14px}
+  .candidate-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+  .candidate-name{font-weight:700;font-size:16px}
+  .skill-tag{display:inline-block;background:#e9f2ff;padding:6px 8px;border-radius:6px;margin:6px 6px 0 0;font-weight:600;font-size:12px;color:#0b5ed7}
+  .stats{display:flex;gap:12px;margin-top:12px;flex-wrap:wrap}
+  .stat-card{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;padding:12px;border-radius:8px;min-width:160px;text-align:center}
+  .small-muted{color:#666;font-size:13px}
+  .message{padding:12px;border-radius:8px;margin-top:12px;display:none}
+  .message.success{background:#e8f6ec;color:#155724;border:1px solid #c7e7cf}
+  .message.error{background:#fbeaea;color:#7a1c1c;border:1px solid #f0c7c7}
+  .export-btn{background:#28a745}
+  @media(max-width:800px){.row{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
-    <div class="header">
-        <h1>🎯 HR Recruitment Dashboard</h1>
-        <p>Manage job postings, review candidates, and search talent - All in one place</p>
-    </div>
-    
-    <div class="tab active" onclick="showTab('search', this)">🔍 Search Candidates</div>
-<div class="tab" onclick="showTab('create-job', this)">📝 Create Job Posting</div>
-<div class="tab" onclick="showTab('links', this)">🔗 Application Forms</div>
-<div class="tab" onclick="showTab('sheets', this)">📊 View All Data</div>
+<div class="container">
+  <div class="header">
+    <h1>🎯 HR Recruitment Dashboard</h1>
+    <p class="small-muted">Manage job postings, review candidates, and search talent — all in one place.</p>
+  </div>
 
-    
-    <!-- SEARCH TAB -->
-    <div id="search-tab" class="content active">
-        <h2 style="margin-bottom: 20px;">🔍 Search & Filter Candidates</h2>
-        
-        <form id="searchForm">
-            <div class="row">
-                <div class="form-group">
-                    <label>Location</label>
-                    <input type="text" name="location" placeholder="e.g., Mumbai, Delhi, Bangalore">
-                </div>
-                
-                <div class="form-group">
-                    <label>Status</label>
-                    <select name="status">
-                        <option value="">All Statuses</option>
-                        <option value="new">New</option>
-                        <option value="screening">Screening</option>
-                        <option value="interview">Interview</option>
-                        <option value="selected">Selected</option>
-                        <option value="rejected">Rejected</option>
-                    </select>
-                </div>
-            </div>
-            
-            <div class="row">
-                <div class="form-group">
-                    <label>Minimum Experience (years)</label>
-                    <input type="number" name="min_experience" value="0" min="0">
-                </div>
-                
-                <div class="form-group">
-                    <label>Maximum Experience (years)</label>
-                    <input type="number" name="max_experience" value="100" min="0">
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label>Skills (comma-separated)</label>
-                <input type="text" name="skills" placeholder="e.g., React, Python, Node.js">
-                <small style="color: #666;">Enter skills separated by commas</small>
-            </div>
-            
-            <button type="submit">🔍 Search Candidates</button>
-        </form>
-        
-        <div class="loading" id="searchLoading">
-            <div class="spinner"></div>
-            <p>Searching candidates...</p>
+  <div class="tabs" role="tablist" aria-label="Main Tabs">
+    <div class="tab active" data-tab="search">🔍 Search Candidates</div>
+    <div class="tab" data-tab="create-job">📝 Create Job Posting</div>
+    <div class="tab" data-tab="links">🔗 Application Forms</div>
+    <div class="tab" data-tab="sheets">📊 View All Data</div>
+  </div>
+
+  <!-- SEARCH -->
+  <div id="search" class="content active" role="tabpanel">
+    <h2 style="margin-bottom:12px">🔍 Search & Filter Candidates</h2>
+
+    <form id="searchForm">
+      <div class="row">
+        <div>
+          <label for="location">Location</label>
+          <input id="location" name="location" placeholder="e.g., Mumbai, Delhi, Bangalore" />
         </div>
-        
-        <div id="searchMessage" class="message"></div>
-        
-        <div id="searchStats" style="display: none;">
-            <div class="stats">
-                <div class="stat-card">
-                    <div class="stat-value" id="totalCandidates">0</div>
-                    <div class="stat-label">Total Candidates</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="filteredCount">0</div>
-                    <div class="stat-label">Matching Results</div>
-                </div>
-            </div>
+        <div>
+          <label for="status">Status</label>
+          <select id="status" name="status">
+            <option value="">All Statuses</option>
+            <option value="new">New</option>
+            <option value="screening">Screening</option>
+            <option value="interview">Interview</option>
+            <option value="selected">Selected</option>
+            <option value="rejected">Rejected</option>
+          </select>
         </div>
-        
-        <div id="searchResults" class="results"></div>
-    </div>
-    
-    <!-- CREATE JOB TAB -->
-    <div id="create-job-tab" class="content">
-        <h2 style="margin-bottom: 20px;">📝 Create New Job Posting</h2>
-        
-        <form id="jobForm">
-            <div class="form-group">
-                <label>Job Title <span class="required">*</span></label>
-                <input type="text" name="job_title" required placeholder="e.g., Senior React Developer">
-            </div>
-            
-            <div class="form-group">
-                <label>Job Description <span class="required">*</span></label>
-                <textarea name="job_description" required placeholder="Describe the role, responsibilities, and requirements..."></textarea>
-            </div>
-            
-            <div class="row">
-                <div class="form-group">
-                    <label>Location <span class="required">*</span></label>
-                    <input type="text" name="location" required placeholder="e.g., Mumbai">
-                </div>
-                
-                <div class="form-group">
-                    <label>Department <span class="required">*</span></label>
-                    <input type="text" name="department" required placeholder="e.g., Engineering">
-                </div>
-            </div>
-            
-            <div class="row">
-                <div class="form-group">
-                    <label>Minimum Experience (years) <span class="required">*</span></label>
-                    <input type="number" name="min_experience" required value="0" min="0">
-                </div>
-                
-                <div class="form-group">
-                    <label>Maximum Age</label>
-                    <input type="number" name="max_age" value="100" min="18">
-                </div>
-            </div>
-            
-            <div class="row">
-                <div class="form-group">
-                    <label>Salary Range</label>
-                    <input type="text" name="salary_range" placeholder="e.g., 15-20 LPA">
-                </div>
-                
-                <div class="form-group">
-                    <label>Job Type <span class="required">*</span></label>
-                    <select name="job_type" required>
-                        <option value="Full-time">Full-time</option>
-                        <option value="Part-time">Part-time</option>
-                        <option value="Contract">Contract</option>
-                        <option value="Internship">Internship</option>
-                    </select>
-                </div>
-            </div>
-            
-            <button type="submit">Create Job Posting</button>
-        </form>
-        
-        <div class="loading" id="jobLoading">
-            <div class="spinner"></div>
-            <p>Creating job posting...</p>
+      </div>
+
+      <div class="row" style="margin-top:12px">
+        <div>
+          <label for="min_experience">Minimum Experience (years)</label>
+          <input id="min_experience" name="min_experience" type="number" min="0" value="0" />
         </div>
-        
-        <div id="jobMessage" class="message"></div>
-    </div>
-    
-    <!-- LINKS TAB -->
-    <div id="links-tab" class="content">
-        <h2 style="margin-bottom: 20px;">🔗 Application Forms & Resources</h2>
-        
-        <div class="links">
-            <div class="link-card">
-                <h3>📋 Candidate Application Form</h3>
-                <p style="margin: 10px 0; color: #666;">Share this link with candidates to apply</p>
-                <a href="https://grover8.github.io/hr-recruitment-system/candidate_application_form.html" target="_blank" target="_blank">Open Application Form →</a>
-            </div>
-            
-            <div class="link-card">
-                <h3>📊 Google Sheets Dashboard</h3>
-                <p style="margin: 10px 0; color: #666;">View and manage all data</p>
-                <a href="https://docs.google.com/spreadsheets/d/12SY44opAnWer68CMicfZZz_lsn09G_hDPD2nXXr7lbk" target="_blank">Open Google Sheet →</a>
-            </div>
-            
-            <div class="link-card">
-                <h3>📁 Resume Storage</h3>
-                <p style="margin: 10px 0; color: #666;">Access all uploaded resumes</p>
-                <a href="https://drive.google.com/drive/folders/12SY44opAnWer68CMicfZZz_lsn09G_hDPD2nXXr7lbk" target="_blank">Open Drive Folder →</a>
-            </div>
+        <div>
+          <label for="max_experience">Maximum Experience (years)</label>
+          <input id="max_experience" name="max_experience" type="number" min="0" value="100" />
         </div>
-        
-        <div style="margin-top: 30px; padding: 20px; background: #fff3cd; border-radius: 8px; border: 1px solid #ffc107;">
-            <h3 style="margin-bottom: 10px;">💡 Quick Setup Guide</h3>
-            <ol style="margin-left: 20px; line-height: 1.8;">
-                <li>Update the webhook URLs in this file (see JavaScript at bottom)</li>
-                <li>Share the candidate application form link with job seekers</li>
-                <li>Use this dashboard to search and filter candidates</li>
-                <li>View detailed data in Google Sheets</li>
-                <li>Access resumes directly from Google Drive links</li>
-            </ol>
-        </div>
-    </div>
-    
-    <!-- SHEETS TAB -->
-    <div id="sheets-tab" class="content">
-        <h2 style="margin-bottom: 20px;">📊 Data Management</h2>
-        
-        <div class="stats">
-            <div class="stat-card">
-                <div class="stat-value">📝</div>
-                <div class="stat-label">Jobs Sheet</div>
-                <a href="https://docs.google.com/spreadsheets/d/12SY44opAnWer68CMicfZZz_lsn09G_hDPD2nXXr7lbk/edit#gid=JOBS_GID" target="_blank" 
-                   style="color: white; text-decoration: underline; margin-top: 10px; display: block;">
-                    View Jobs →
-                </a>
-            </div>
-            
-            <div class="stat-card">
-                <div class="stat-value">👥</div>
-                <div class="stat-label">Candidates Sheet</div>
-                <a href="https://docs.google.com/spreadsheets/d/12SY44opAnWer68CMicfZZz_lsn09G_hDPD2nXXr7lbk/edit#gid=CANDIDATES_GID" target="_blank" 
-                   style="color: white; text-decoration: underline; margin-top: 10px; display: block;">
-                    View Candidates →
-                </a>
-            </div>
-        </div>
-        
-        <div style="padding: 20px; background: #f8f9fa; border-radius: 8px; margin-top: 20px;">
-            <h3 style="margin-bottom: 15px;">📋 Available Data</h3>
-            
-            <div style="margin-bottom: 20px;">
-                <h4 style="color: #667eea; margin-bottom: 10px;">Jobs_Clean Sheet</h4>
-                <ul style="margin-left: 20px; line-height: 1.8; color: #666;">
-                    <li>Job ID, Title, Description</li>
-                    <li>Location, Department, Experience Requirements</li>
-                    <li>Salary Range, Job Type, Status</li>
-                    <li>Posted Date, PDF Links</li>
-                </ul>
-            </div>
-            
-            <div>
-                <h4 style="color: #667eea; margin-bottom: 10px;">Candidates Sheet</h4>
-                <ul style="margin-left: 20px; line-height: 1.8; color: #666;">
-                    <li>Candidate ID, Name, Email, Phone</li>
-                    <li>Location, Experience, Current Company & Role</li>
-                    <li>Skills (AI-extracted from resume)</li>
-                    <li>Education, Key Achievements</li>
-                    <li>Resume Link (Google Drive), Application Date, Status</li>
-                </ul>
-            </div>
-        </div>
+      </div>
+
+      <div style="margin-top:12px">
+        <label for="skills">Skills (comma-separated)</label>
+        <input id="skills" name="skills" placeholder="e.g., React, Python, Node.js" />
+        <div style="margin-top:12px"><button type="submit">🔍 Search Candidates</button></div>
+      </div>
+    </form>
+
+    <div id="searchMessage" class="message"></div>
+    <div id="searchStats" class="stats" style="display:none">
+      <div class="stat-card"><div style="font-size:18px;font-weight:700" id="totalCandidates">0</div><div style="opacity:.9">Total Candidates</div></div>
+      <div class="stat-card"><div style="font-size:18px;font-weight:700" id="filteredCount">0</div><div style="opacity:.9">Matching Results</div></div>
     </div>
 
-   <script>
+    <div style="margin-top:14px">
+      <button id="exportAll" class="export-btn" style="display:none;margin-bottom:12px">📥 Export All Results to CSV</button>
+    </div>
+
+    <div id="searchResults" class="results"></div>
+  </div>
+
+  <!-- CREATE JOB -->
+  <div id="create-job" class="content" role="tabpanel" aria-hidden="true">
+    <h2 style="margin-bottom:12px">📝 Create New Job Posting</h2>
+    <form id="jobForm">
+      <div style="margin-bottom:12px">
+        <label>Job Title *</label>
+        <input name="job_title" required placeholder="e.g., Senior React Developer" />
+      </div>
+      <div style="margin-bottom:12px">
+        <label>Job Description *</label>
+        <textarea name="job_description" required placeholder="Describe the role..." rows="5"></textarea>
+      </div>
+
+      <div class="row">
+        <div>
+          <label>Location *</label>
+          <input name="location" required placeholder="e.g., Mumbai" />
+        </div>
+        <div>
+          <label>Department *</label>
+          <input name="department" required placeholder="e.g., Engineering" />
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:12px">
+        <div>
+          <label>Minimum Experience (years) *</label>
+          <input name="min_experience" type="number" min="0" value="0" required />
+        </div>
+        <div>
+          <label>Maximum Age</label>
+          <input name="max_age" type="number" min="18" value="100" />
+        </div>
+      </div>
+
+      <div style="margin-top:12px">
+        <label>Salary Range</label>
+        <input name="salary_range" placeholder="e.g., 15-20 LPA" />
+      </div>
+
+      <div style="margin-top:12px"><button type="submit">Create Job Posting</button></div>
+      <div id="jobMessage" class="message" style="display:none"></div>
+    </form>
+  </div>
+
+  <!-- LINKS -->
+  <div id="links" class="content" role="tabpanel" aria-hidden="true">
+    <h2 style="margin-bottom:12px">🔗 Application Forms & Resources</h2>
+    <div class="links">
+      <div class="link-card">
+        <h3>📋 Candidate Application Form</h3>
+        <p class="small-muted">Share this link with candidates to apply</p>
+        <a id="candidateFormLink" href="#" target="_blank" rel="noopener">Open Application Form →</a>
+      </div>
+      <div class="link-card">
+        <h3>📊 Google Sheets Dashboard</h3>
+        <p class="small-muted">View and manage all data</p>
+        <a href="#" id="jobsSheetLink" target="_blank" rel="noopener">Open Google Sheet →</a>
+      </div>
+      <div class="link-card">
+        <h3>📁 Resume Storage</h3>
+        <p class="small-muted">Access all uploaded resumes</p>
+        <a href="#" id="driveFolderLink" target="_blank" rel="noopener">Open Drive Folder →</a>
+      </div>
+    </div>
+    <div style="margin-top:14px;padding:12px;background:#fff3cd;border-radius:8px;border:1px solid #ffd27a">
+      <h4>Quick Setup Guide</h4>
+      <ol style="margin-left:18px;margin-top:8px">
+        <li>Set webhook URLs in the script</li>
+        <li>Share candidate application form link</li>
+        <li>Use dashboard to search and create jobs</li>
+        <li>Open Sheets for full data</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- SHEETS -->
+  <div id="sheets" class="content" role="tabpanel" aria-hidden="true">
+    <h2 style="margin-bottom:12px">📊 Data Management</h2>
+    <div class="stats" style="gap:16px">
+      <div class="stat-card"><div style="font-size:18px">📝</div><div style="opacity:.95">Jobs Sheet</div><a id="viewJobs" href="#" target="_blank" style="color:#fff;display:block;margin-top:8px;text-decoration:underline">View Jobs →</a></div>
+      <div class="stat-card"><div style="font-size:18px">👥</div><div style="opacity:.95">Candidates Sheet</div><a id="viewCandidates" href="#" target="_blank" style="color:#fff;display:block;margin-top:8px;text-decoration:underline">View Candidates →</a></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ------------ CONFIG -------------- */
 const WEBHOOKS = {
-  createJob: 'https://n8n.srv1163004.hstgr.cloud/webhook/create-job',
-  searchCandidates: 'https://n8n.srv1163004.hstgr.cloud/webhook/search-candidates',
-  candidateForm: 'https://grover8.github.io/hr-recruitment-system/candidate_application_form.html'
+  createJob: 'https://n8n.srv1163004.hstgr.cloud/webhook/apply-job',          // update if needed
+  searchCandidates: 'https://n8n.srv1163004.hstgr.cloud/webhook/search-candidates', // update if needed
+  candidateForm: 'https://grover8.github.io/hr-recruitment-system/candidate_application_form.html',
+  jobsSheet: 'https://docs.google.com/spreadsheets/d/12SY44opAnWer68CMicfZZz_lsn09G_hDPD2nXXr7lbk',
+  driveFolder: 'https://drive.google.com/drive/folders/12SY44opAnWer68CMicfZZz_lsn09G_hDPD2nXXr7lbk'
 };
-
-function showTab(tabName, element) {
-  document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  const panel = document.getElementById(tabName + '-tab');
+/* ---------- UI Helpers ------------ */
+function showTab(name){
+  document.querySelectorAll('.content').forEach(c=>c.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  const tabBtn = document.querySelector(`.tab[data-tab="${name}"]`);
+  if(tabBtn) tabBtn.classList.add('active');
+  const panel = document.getElementById(name);
   if(panel) panel.classList.add('active');
-  if(element) element.classList.add('active');
+}
+/* ---------- Render / util --------- */
+function safeText(v){ return (v === undefined || v === null) ? '' : String(v); }
+function createCandidateCard(cand){
+  const skillsHTML = cand.skills ? cand.skills.split(',').slice(0,10).map(s=>`<span class="skill-tag">${s.trim()}</span>`).join('') : '';
+  return `
+    <div class="candidate-card">
+      <div class="candidate-header">
+        <div>
+          <div class="candidate-name">${escapeHtml(cand.name||'N/A')}</div>
+          <div class="small-muted">${escapeHtml(cand.current_role||'Not specified')} at ${escapeHtml(cand.current_company||'N/A')}</div>
+        </div>
+        <div style="background:#eef2ff;padding:6px 10px;border-radius:999px;font-weight:700;color:#254eda">${escapeHtml(cand.status||'New')}</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px">
+        <div><div class="small-muted">📧 Email</div>${escapeHtml(cand.email||'N/A')}</div>
+        <div><div class="small-muted">📞 Phone</div>${escapeHtml(cand.phone||'N/A')}</div>
+        <div><div class="small-muted">📍 Location</div>${escapeHtml(cand.location||'N/A')}</div>
+        <div><div class="small-muted">💼 Experience</div>${escapeHtml(cand.total_experience||0)} years</div>
+        <div><div class="small-muted">🎓 Education</div>${escapeHtml(cand.education||'N/A')}</div>
+        <div><div class="small-muted">📅 Applied</div>${escapeHtml(cand.applied_date||'N/A')}</div>
+      </div>
+      ${skillsHTML ? `<div style="margin-top:12px"><div class="small-muted">🛠 Skills</div>${skillsHTML}</div>` : ''}
+      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+        ${(cand.resume_link) ? `<button onclick="window.open('${encodeURI(cand.resume_link)}','_blank')">📄 View Resume</button>` : `<button disabled>No Resume</button>`}
+        <button onclick="copyEmail('${escapeJs(cand.email||'')}')">📋 Copy Email</button>
+      </div>
+    </div>
+  `;
+}
+function escapeHtml(s){
+  if(!s) return '';
+  return String(s).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+}
+function escapeJs(s){ return String(s||'').replace(/'/g,"\\'").replace(/\n/g,' '); }
+
+/* ---------- CSV Export ---------- */
+function exportToCSV(items, filename='candidates_export.csv'){
+  const headers = ['Name','Email','Phone','Location','Experience','Company','Role','Skills','Education','Applied'];
+  const rows = items.map(c=>[
+    c.name||'',
+    c.email||'',
+    c.phone||'',
+    c.location||'',
+    c.total_experience||'',
+    c.current_company||'',
+    c.current_role||'',
+    c.skills||'',
+    c.education||'',
+    c.applied_date||''
+  ]);
+  let csv = headers.join(',') + '\n' + rows.map(r=>r.map(cell=>`"${String(cell||'').replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
 }
 
-// Ensure initial state on load
-document.addEventListener('DOMContentLoaded', () => {
-  // Only keep search active
-  document.querySelectorAll('.content').forEach(el => {
-    if(el.id !== 'search-tab') el.classList.remove('active');
-  });
-  document.querySelectorAll('.tab').forEach((t,i) => i===0 ? t.classList.add('active') : t.classList.remove('active'));
-});
+/* ---------- Copy email --------- */
+function copyEmail(email){
+  if(!email){ alert('No email to copy'); return; }
+  navigator.clipboard?.writeText(email).then(()=>alert('Email copied: '+email)).catch(()=>{ alert('Copy failed.'); });
+}
 
-// Simple search form sender for testing
-document.addEventListener('DOMContentLoaded', () => {
+/* ---------- STATE ---------- */
+let lastSearchResults = [];
+
+/* ---------- Event wiring ---------- */
+document.addEventListener('DOMContentLoaded',()=>{
+  // tabs
+  document.querySelectorAll('.tab').forEach(btn=>{
+    btn.addEventListener('click',()=> showTab(btn.dataset.tab));
+  });
+
+  // set links
+  document.getElementById('candidateFormLink').href = WEBHOOKS.candidateForm;
+  document.getElementById('jobsSheetLink').href = WEBHOOKS.jobsSheet;
+  document.getElementById('driveFolderLink').href = WEBHOOKS.driveFolder;
+  document.getElementById('viewJobs').href = WEBHOOKS.jobsSheet;
+  document.getElementById('viewCandidates').href = WEBHOOKS.jobsSheet;
+
+  // search submit
   const sf = document.getElementById('searchForm');
-  if(!sf) return;
   sf.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const formData = new FormData(e.target);
+    const messageEl = document.getElementById('searchMessage');
+    const statsEl = document.getElementById('searchStats');
+    const resultsEl = document.getElementById('searchResults');
+    const exportAllBtn = document.getElementById('exportAll');
+    messageEl.style.display = 'none'; statsEl.style.display = 'none'; resultsEl.innerHTML = ''; exportAllBtn.style.display = 'none';
+
     const payload = {
-      location: formData.get('location') || '',
-      status: formData.get('status') || '',
-      min_experience: Number(formData.get('min_experience') || 0),
-      max_experience: Number(formData.get('max_experience') || 100),
-      skills: formData.get('skills') || ''
+      location: sf.location.value || '',
+      status: sf.status.value || '',
+      min_experience: Number(sf.min_experience.value||0),
+      max_experience: Number(sf.max_experience.value||100),
+      skills: sf.skills.value || ''
     };
-    try {
-      const res = await fetch(WEBHOOKS.searchCandidates, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+
+    try{
+      const resp = await fetch(WEBHOOKS.searchCandidates, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
         body: JSON.stringify(payload)
       });
-      const json = await res.json();
-      console.log('search response', json);
-    } catch(err) {
-      console.error('search request failed', err);
+      if(!resp.ok) throw new Error('Search request failed: '+resp.status);
+      const data = await resp.json();
+
+      // Expecting format: { total_candidates, filtered_count, results: [...] }
+      const results = data.results || [];
+      lastSearchResults = results;
+
+      if(results.length === 0){
+        messageEl.className = 'message';
+        messageEl.classList.add('error');
+        messageEl.style.display = 'block';
+        messageEl.textContent = 'No candidates found. Try adjusting your search criteria.';
+      } else {
+        statsEl.style.display = 'flex';
+        document.getElementById('totalCandidates').textContent = data.total_candidates || results.length;
+        document.getElementById('filteredCount').textContent = data.filtered_count || results.length;
+        resultsEl.innerHTML = results.map(r=>createCandidateCard(r)).join('');
+        exportAllBtn.style.display = 'inline-block';
+      }
+    }catch(err){
+      messageEl.className = 'message';
+      messageEl.classList.add('error');
+      messageEl.style.display = 'block';
+      messageEl.textContent = 'Search error: ' + (err.message||err);
+      console.error(err);
     }
   });
+
+  // export button
+  document.getElementById('exportAll').addEventListener('click',()=> exportToCSV(lastSearchResults || []));
+
+  // job form
+  document.getElementById('jobForm').addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const fm = e.target;
+    const msg = document.getElementById('jobMessage');
+    msg.style.display = 'none';
+
+    const payload = {
+      job_title: fm.job_title.value,
+      job_description: fm.job_description.value,
+      location: fm.location.value,
+      department: fm.department.value,
+      min_experience: Number(fm.min_experience.value||0),
+      max_age: Number(fm.max_age.value||100),
+      salary_range: fm.salary_range.value || '',
+    };
+
+    try{
+      const res = await fetch(WEBHOOKS.createJob, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(payload)
+      });
+      if(!res.ok) throw new Error('Job create failed: '+res.status);
+      const json = await res.json();
+      msg.className = 'message success'; msg.style.display='block';
+      msg.textContent = json.message || 'Job created successfully';
+      fm.reset();
+    }catch(err){
+      msg.className = 'message error'; msg.style.display='block';
+      msg.textContent = 'Error creating job: ' + (err.message||err);
+      console.error(err);
+    }
+  });
+
+  // show initial
+  showTab('search');
 });
+
+/* ---------- Small safety for older browsers ---------- */
+(function polyfills(){
+  if(!window.fetch){ console.warn('Fetch missing - page may not work in this browser'); }
+})();
 </script>
-
-
-                    // Show stats
-                    stats.style.display = 'block';
-                    document.getElementById('totalCandidates').textContent = data.total_candidates || 0;
-                    document.getElementById('filteredCount').textContent = data.filtered_count || 0;
-                    
-                    if (data.results.length === 0) {
-                        message.className = 'message info';
-                        message.style.display = 'block';
-                        message.innerHTML = '<strong>No candidates found</strong><br>Try adjusting your search criteria.';
-                    } else {
-                        // Display results
-                        results.innerHTML = data.results.map(candidate => {
-
-    const skillsHTML = candidate.skills
-        ? candidate.skills.split(',').slice(0, 10)
-            .map(skill => `<span class="skill-tag">${skill.trim()}</span>`)
-            .join('')
-        : '';
-
-    return `
-        <div class="candidate-card">
-
-            <div class="candidate-header">
-                <div>
-                    <div class="candidate-name">${candidate.name || 'N/A'}</div>
-                    <div class="candidate-role">${candidate.current_role || 'Not specified'} at ${candidate.current_company || 'N/A'}</div>
-                </div>
-                <div class="candidate-badge">${candidate.status || 'New'}</div>
-            </div>
-
-            <div class="candidate-details">
-                <div class="detail-item"><div class="detail-label">Email</div>${candidate.email || 'N/A'}</div>
-                <div class="detail-item"><div class="detail-label">Phone</div>${candidate.phone || 'N/A'}</div>
-                <div class="detail-item"><div class="detail-label">Location</div>${candidate.location || 'N/A'}</div>
-                <div class="detail-item"><div class="detail-label">Experience</div>${candidate.total_experience || 0} years</div>
-                <div class="detail-item"><div class="detail-label">Applied</div>${candidate.applied_date || 'N/A'}</div>
-                <div class="detail-item"><div class="detail-label">Education</div>${candidate.education || 'N/A'}</div>
-            </div>
-
-            ${skillsHTML ? `
-                <div style="margin-top: 15px;">
-                    <div class="detail-label">Skills</div>
-                    <div class="skills-tags">${skillsHTML}</div>
-                </div>
-            ` : ''}
-
-            <div class="actions">
-                ${candidate.resume_link 
-                    ? `<button class="btn-small" onclick="window.open('${candidate.resume_link}', '_blank')">View Resume</button>` 
-                    : `<button class="btn-small" disabled>No Resume</button>`
-                }
-                <button class="btn-small btn-secondary" onclick="copyEmail('${candidate.email}')">Copy Email</button>
-            </div>
-
-        </div>
-    `;
-}).join('');
-
-
-                        
-                        // Add export button
-                        const exportBtn = document.createElement('button');
-                        exportBtn.className = 'export-btn';
-                        exportBtn.textContent = '📥 Export Results to CSV';
-                        exportBtn.onclick = () => exportToCSV(data.results);
-                        results.insertBefore(exportBtn, results.firstChild);
-                    }
-                } else {
-                    throw new Error('Invalid response format');
-                }
-            } catch (error) {
-                loading.style.display = 'none';
-                message.className = 'message error';
-                message.style.display = 'block';
-                message.innerHTML = `<strong>Error:</strong> ${error.message}`;
-            }
-        });
-        
-        // ========== CREATE JOB ==========
-        document.getElementById('jobForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const formData = new FormData(e.target);
-            const jobData = {
-                job_title: formData.get('job_title'),
-                job_description: formData.get('job_description'),
-                location: formData.get('location'),
-                department: formData.get('department'),
-                min_experience: parseInt(formData.get('min_experience')),
-                max_age: parseInt(formData.get('max_age')),
-                salary_range: formData.get('salary_range'),
-                job_type: formData.get('job_type')
-            };
-            
-            const loading = document.getElementById('jobLoading');
-            const message = document.getElementById('jobMessage');
-            
-            loading.style.display = 'block';
-            message.style.display = 'none';
-            
-            try {
-                const response = await fetch(WEBHOOKS.createJob, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(jobData)
-                });
-                
-                const data = await response.json();
-                
-                loading.style.display = 'none';
-                
-                if (data.success) {
-                    message.className = 'message success';
-                    message.innerHTML = `
-                        <strong>✅ Job Created Successfully!</strong><br>
-                        Job ID: ${data.job_id}<br>
-                        Title: ${data.title || jobData.job_title}
-                    `;
-                    e.target.reset();
-                } else {
-                    throw new Error(data.message || 'Failed to create job');
-                }
-                
-                message.style.display = 'block';
-            } catch (error) {
-                loading.style.display = 'none';
-                message.className = 'message error';
-                message.innerHTML = `<strong>Error:</strong> ${error.message}`;
-                message.style.display = 'block';
-            }
-        });
-        
-        // ========== UTILITY FUNCTIONS ==========
-        function copyEmail(email) {
-            navigator.clipboard.writeText(email);
-            alert('Email copied to clipboard: ' + email);
-        }
-        
-        function exportToCSV(candidates) {
-            const headers = ['Name', 'Email', 'Phone', 'Location', 'Experience', 'Company', 'Role', 'Skills', 'Education'];
-            const rows = candidates.map(c => [
-                c.name, c.email, c.phone, c.location, c.total_experience,
-                c.current_company, c.current_role, c.skills, c.education
-            ]);
-            
-            let csv = headers.join(',') + '\n';
-            rows.forEach(row => {
-                csv += row.map(cell => `"${cell || ''}"`).join(',') + '\n';
-            });
-            
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `candidates_${new Date().toISOString().split('T')[0
+</body>
+</html>
