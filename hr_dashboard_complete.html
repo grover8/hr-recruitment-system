@@ -1,1 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR Recruitment Dashboard</title>
+
+<style>
+/* ---------- GLOBAL STYLES ---------- */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* ---------- HEADER ---------- */
+.header {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.header h1 { font-size: 28px; margin-bottom: 5px; color: #333; }
+.header p { color: #666; }
+
+/* ---------- TABS ---------- */
+.tab {
+    display: inline-block;
+    background: white;
+    padding: 14px 26px;
+    margin-right: 6px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: 0.2s;
+}
+.tab.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+.tab:hover { transform: translateY(-2px); }
+
+/* ---------- CONTENT PANELS ---------- */
+.content {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    margin-top: 20px;
+    display: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.content.active { display: block; }
+
+/* ---------- FORMS ---------- */
+.form-group { margin-bottom: 20px; }
+label { display: block; font-weight: 600; margin-bottom: 8px; }
+
+input, textarea, select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 15px;
+}
+input:focus, textarea:focus, select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102,126,234,0.2);
+}
+
+/* ---------- BUTTONS ---------- */
+button {
+    padding: 12px 22px;
+    background: #667eea;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    color: white;
+    cursor: pointer;
+    transition: 0.2s;
+}
+button:hover { transform: translateY(-2px); }
+
+/* ---------- SEARCH RESULTS ---------- */
+.results { margin-top: 30px; }
+.candidate-card {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 16px;
+    border: 1px solid #ddd;
+}
+.candidate-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+.skill-tag {
+    background: #e3f2fd;
+    padding: 4px 10px;
+    margin: 3px;
+    border-radius: 4px;
+    font-size: 12px;
+    display: inline-block;
+}
+
+/* ---------- MESSAGES ---------- */
+.message { padding: 15px; border-radius: 10px; display: none; margin-top: 20px; }
+.success { background: #d4edda; }
+.error   { background: #f8d7da; }
+.info    { background: #d1ecf1; }
+
+/* ---------- LOADING ---------- */
+.loading { display: none; text-align:center; padding:30px; }
+.spinner {
+    width: 40px; height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+@keyframes spin { 100% { transform: rotate(360deg); } }
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <h1>🎯 HR Recruitment Dashboard</h1>
+    <p>Manage job postings, candidates & data</p>
+</div>
+
+<!-- TABS -->
+<div class="tab active" onclick="showTab('search', this)">🔍 Search Candidates</div>
+<div class="tab" onclick="showTab('create-job', this)">📝 Create Job</div>
+<div class="tab" onclick="showTab('links', this)">🔗 Application Links</div>
+<div class="tab" onclick="showTab('sheets', this)">📊 View Data</div>
+
+<!-- SEARCH TAB -->
+<div id="search-tab" class="content active">
+    <h2>🔍 Search Candidates</h2>
+
+    <form id="searchForm">
+        <div class="form-group">
+            <label>Location</label>
+            <input name="location" placeholder="e.g., Mumbai">
+        </div>
+
+        <div class="form-group">
+            <label>Status</label>
+            <select name="status">
+                <option value="">All</option>
+                <option value="new">New</option>
+                <option value="screening">Screening</option>
+                <option value="interview">Interview</option>
+                <option value="selected">Selected</option>
+                <option value="rejected">Rejected</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Skills (comma separated)</label>
+            <input name="skills" placeholder="React, Python, Node">
+        </div>
+
+        <button type="submit">Search</button>
+    </form>
+
+    <div class="loading" id="searchLoading">
+        <div class="spinner"></div>
+        <p>Searching...</p>
+    </div>
+
+    <div id="searchMessage" class="message"></div>
+    <div id="searchResults" class="results"></div>
+</div>
+
+<!-- CREATE JOB TAB -->
+<div id="create-job-tab" class="content">
+    <h2>📝 Create Job Posting</h2>
+
+    <form id="jobForm">
+        <div class="form-group">
+            <label>Job Title *</label>
+            <input name="job_title" required>
+        </div>
+        <div class="form-group">
+            <label>Description *</label>
+            <textarea name="job_description" required></textarea>
+        </div>
+        <button type="submit">Create Job</button>
+    </form>
+
+    <div class="loading" id="jobLoading">
+        <div class="spinner"></div>
+        <p>Creating job...</p>
+    </div>
+
+    <div id="jobMessage" class="message"></div>
+</div>
+
+<!-- LINKS TAB -->
+<div id="links-tab" class="content">
+    <h2>🔗 Forms & Resources</h2>
+    <p><a href="https://grover8.github.io/hr-recruitment-system/candidate_application_form.html" target="_blank">Open Candidate Application Form</a></p>
+</div>
+
+<!-- SHEETS TAB -->
+<div id="sheets-tab" class="content">
+    <h2>📊 Sheets</h2>
+    <p><a href="https://docs.google.com/spreadsheets/d/12SY44opAnWer68CMicfZZz_lsn09G_hDPD2nXXr7lbk" target="_blank">Open Google Sheet</a></p>
+</div>
+
+<script>
+/* ---------------- WEBHOOK CONFIG ---------------- */
+const WEBHOOKS = {
+    searchCandidates: "https://n8n.srv1163004.hstgr.cloud/webhook/search-candidates",
+    createJob:       "https://n8n.srv1163004.hstgr.cloud/webhook/create-job"
+};
+
+/* ---------------- TAB SWITCHING ---------------- */
+function showTab(tab, el) {
+    document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+
+    document.getElementById(tab + "-tab").classList.add('active');
+    el.classList.add('active');
+}
+
+/* ---------------- SEARCH CANDIDATES ---------------- */
+document.getElementById("searchForm").onsubmit = async function(e) {
+    e.preventDefault();
+
+    const loading = document.getElementById("searchLoading");
+    const msg = document.getElementById("searchMessage");
+    const results = document.getElementById("searchResults");
+
+    loading.style.display = "block";
+    msg.style.display = "none";
+    results.innerHTML = "";
+
+    const payload = Object.fromEntries(new FormData(e.target));
+
+    try {
+        const res = await fetch(WEBHOOKS.searchCandidates, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        loading.style.display = "none";
+
+        if (!data.results || data.results.length === 0) {
+            msg.className = "message info";
+            msg.innerHTML = "No candidates found.";
+            msg.style.display = "block";
+            return;
+        }
+
+        results.innerHTML = data.results.map(c => {
+            const skills = c.skills ? c.skills.split(",").map(s => `<span class='skill-tag'>${s.trim()}</span>`).join("") : "";
+            return `
+                <div class="candidate-card">
+                    <div class="candidate-header">
+                        <div>
+                            <strong>${c.name || "N/A"}</strong><br>
+                            ${c.current_role || "N/A"} at ${c.current_company || "N/A"}
+                        </div>
+                        <span>${c.status || "New"}</span>
+                    </div>
+
+                    Email: ${c.email || "N/A"}<br>
+                    Phone: ${c.phone || "N/A"}<br>
+                    Location: ${c.location || "N/A"}<br>
+                    Experience: ${c.total_experience || 0} years<br>
+
+                    <div class="skills-tags">${skills}</div>
+                </div>
+            `;
+        }).join("");
+
+    } catch (err) {
+        loading.style.display = "none";
+        msg.className = "message error";
+        msg.innerHTML = "Error: " + err.message;
+        msg.style.display = "block";
+    }
+};
+
+/* ---------------- CREATE JOB ---------------- */
+document.getElementById("jobForm").onsubmit = async function(e) {
+    e.preventDefault();
+
+    const loading = document.getElementById("jobLoading");
+    const msg = document.getElementById("jobMessage");
+
+    loading.style.display = "block";
+    msg.style.display = "none";
+
+    const payload = Object.fromEntries(new FormData(e.target));
+
+    try {
+        const res = await fetch(WEBHOOKS.createJob, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        loading.style.display = "none";
+
+        if (data.success) {
+            msg.className = "message success";
+            msg.innerHTML = "Job created successfully!";
+        } else {
+            throw new Error(data.message);
+        }
+
+        msg.style.display = "block";
+
+    } catch (err) {
+        loading.style.display = "none";
+        msg.className = "message error";
+        msg.innerHTML = "Error: " + err.message;
+        msg.style.display = "block";
+    }
+};
+</script>
+
+</body>
+</html>
 
