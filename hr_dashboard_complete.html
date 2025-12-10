@@ -651,10 +651,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     } else {
                         // Display results
                         results.innerHTML = data.results.map(candidate => {
+
     const skillsHTML = candidate.skills
-        ? candidate.skills.split(',').slice(0, 10).map(skill =>
-            `<span class="skill-tag">${skill.trim()}</span>`
-          ).join('')
+        ? candidate.skills.split(',').slice(0, 10)
+            .map(skill => `<span class="skill-tag">${skill.trim()}</span>`)
+            .join('')
         : '';
 
     return `
@@ -695,6 +696,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
     `;
 }).join('');
+
 
                         
                         // Add export button
