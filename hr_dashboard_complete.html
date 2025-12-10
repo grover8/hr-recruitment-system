@@ -585,64 +585,46 @@
         </div>
     </div>
 
-    <script>
-        // ========== CONFIGURATION - UPDATE THESE URLs ==========
-        const WEBHOOKS = {
-            createJob: 'https://n8n.srv1163004.hstgr.cloud/webhook/apply-job',
-            searchCandidates: 'https://n8n.srv1163004.hstgr.cloud/webhook/search-candidates',
-            candidateForm: 'https://grover8.github.io/hr-recruitment-system/candidate_application_form.html'
-        };
-        
-        // ========== TAB SWITCHING ==========
-        function showTab(tabName, element) {
-    // Remove active state
+   <script>
+const WEBHOOKS = {
+    createJob: 'https://n8n.srv1163004.hstgr.cloud/webhook/create-job',
+    searchCandidates: 'https://n8n.srv1163004.hstgr.cloud/webhook/search-candidates',
+    candidateForm: 'https://grover8.github.io/hr-recruitment-system/candidate_application_form.html'
+};
+
+// ========= TAB SWITCHING =========
+function showTab(tabName, element) {
     document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
 
-    // Add active state to selected tab
     document.getElementById(tabName + '-tab').classList.add('active');
     element.classList.add('active');
 }
 
+// ========= SEARCH CANDIDATES =========
+document.getElementById('searchForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-            
-            
-        
-        // ========== SEARCH CANDIDATES ==========
-        document.getElementById('searchForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const formData = new FormData(e.target);
-            const searchParams = {
-                location: formData.get('location'),
-                min_experience: formData.get('min_experience'),
-                max_experience: formData.get('max_experience'),
-                skills: formData.get('skills'),
-                status: formData.get('status')
-            };
-            
-            const loading = document.getElementById('searchLoading');
-            const message = document.getElementById('searchMessage');
-            const results = document.getElementById('searchResults');
-            const stats = document.getElementById('searchStats');
-            
-            loading.style.display = 'block';
-            message.style.display = 'none';
-            results.innerHTML = '';
-            stats.style.display = 'none';
-            
-            try {
-                const response = await fetch(WEBHOOKS.searchCandidates, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(searchParams)
-                });
-                
-                const data = await response.json();
-                
-                loading.style.display = 'none';
-                
-                if (data.results) {
+    const formData = new FormData(e.target);
+    const searchParams = {
+        location: formData.get('location'),
+        status: formData.get('status'),
+        min_experience: Number(formData.get('min_experience')),
+        max_experience: Number(formData.get('max_experience')),
+        skills: formData.get('skills')
+    };
+
+    const response = await fetch(WEBHOOKS.searchCandidates, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(searchParams)
+    });
+
+    const data = await response.json();
+    console.log(data);
+});
+</script>
+
                     // Show stats
                     stats.style.display = 'block';
                     document.getElementById('totalCandidates').textContent = data.total_candidates || 0;
