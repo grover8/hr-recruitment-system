@@ -587,43 +587,57 @@
 
    <script>
 const WEBHOOKS = {
-    createJob: 'https://n8n.srv1163004.hstgr.cloud/webhook/create-job',
-    searchCandidates: 'https://n8n.srv1163004.hstgr.cloud/webhook/search-candidates',
-    candidateForm: 'https://grover8.github.io/hr-recruitment-system/candidate_application_form.html'
+  createJob: 'https://n8n.srv1163004.hstgr.cloud/webhook/create-job',
+  searchCandidates: 'https://n8n.srv1163004.hstgr.cloud/webhook/search-candidates',
+  candidateForm: 'https://grover8.github.io/hr-recruitment-system/candidate_application_form.html'
 };
 
-// ========= TAB SWITCHING =========
 function showTab(tabName, element) {
-    document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-
-    document.getElementById(tabName + '-tab').classList.add('active');
-    element.classList.add('active');
+  document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  const panel = document.getElementById(tabName + '-tab');
+  if(panel) panel.classList.add('active');
+  if(element) element.classList.add('active');
 }
 
-// ========= SEARCH CANDIDATES =========
-document.getElementById('searchForm').addEventListener('submit', async (e) => {
+// Ensure initial state on load
+document.addEventListener('DOMContentLoaded', () => {
+  // Only keep search active
+  document.querySelectorAll('.content').forEach(el => {
+    if(el.id !== 'search-tab') el.classList.remove('active');
+  });
+  document.querySelectorAll('.tab').forEach((t,i) => i===0 ? t.classList.add('active') : t.classList.remove('active'));
+});
+
+// Simple search form sender for testing
+document.addEventListener('DOMContentLoaded', () => {
+  const sf = document.getElementById('searchForm');
+  if(!sf) return;
+  sf.addEventListener('submit', async (e) => {
     e.preventDefault();
-
     const formData = new FormData(e.target);
-    const searchParams = {
-        location: formData.get('location'),
-        status: formData.get('status'),
-        min_experience: Number(formData.get('min_experience')),
-        max_experience: Number(formData.get('max_experience')),
-        skills: formData.get('skills')
+    const payload = {
+      location: formData.get('location') || '',
+      status: formData.get('status') || '',
+      min_experience: Number(formData.get('min_experience') || 0),
+      max_experience: Number(formData.get('max_experience') || 100),
+      skills: formData.get('skills') || ''
     };
-
-    const response = await fetch(WEBHOOKS.searchCandidates, {
+    try {
+      const res = await fetch(WEBHOOKS.searchCandidates, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(searchParams)
-    });
-
-    const data = await response.json();
-    console.log(data);
+        body: JSON.stringify(payload)
+      });
+      const json = await res.json();
+      console.log('search response', json);
+    } catch(err) {
+      console.error('search request failed', err);
+    }
+  });
 });
 </script>
+
 
                     // Show stats
                     stats.style.display = 'block';
