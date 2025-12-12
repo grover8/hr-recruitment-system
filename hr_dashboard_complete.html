@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HR Recruitment Dashboard - Enhanced</title>
+    <title>HR Recruitment Dashboard - Job-Centric</title>
     <style>
         * {
             margin: 0;
@@ -77,6 +77,217 @@
             display: block;
         }
         
+        /* Job Cards Grid */
+        .jobs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .job-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .job-card:hover {
+            border-color: #667eea;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.2);
+        }
+        
+        .job-card-header {
+            margin-bottom: 15px;
+        }
+        
+        .job-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .job-id {
+            font-size: 11px;
+            color: #999;
+            font-family: monospace;
+        }
+        
+        .job-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 11px;
+            color: #666;
+            margin-top: 3px;
+        }
+        
+        .job-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 15px;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 13px;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .btn-success {
+            background: #28a745;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 60px;
+            display: none;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            display: none;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        /* Candidates Table */
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        
+        tbody tr {
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .link-card {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+        
+        .link-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+        
+        .link-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .link-card a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        .link-card a:hover {
+            text-decoration: underline;
+        }
+        
         .form-group {
             margin-bottom: 20px;
         }
@@ -91,12 +302,11 @@
         
         input, textarea, select {
             width: 100%;
-            padding: 12px 16px;
+            padding: 12px;
             border: 2px solid #e0e0e0;
             border-radius: 8px;
             font-size: 15px;
             transition: all 0.3s;
-            font-family: inherit;
         }
         
         input:focus, textarea:focus, select:focus {
@@ -122,420 +332,59 @@
             gap: 20px;
         }
         
-        button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 14px 28px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
-        }
-        
-        button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .btn-secondary {
-            background: #6c757d;
-        }
-        
-        .btn-success {
-            background: #28a745;
-        }
-        
-        .btn-small {
-            padding: 8px 16px;
-            font-size: 14px;
-        }
-        
-        .results-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 30px 0 20px;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 8px;
-        }
-        
-        .results-count {
-            font-size: 18px;
-            font-weight: 600;
-            color: #333;
-        }
-        
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .table-container {
-            overflow-x: auto;
-            margin-top: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-        }
-        
-        thead {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-        
-        th {
-            padding: 15px;
-            text-align: left;
-            font-weight: 600;
-            cursor: pointer;
-            user-select: none;
-            position: relative;
-        }
-        
-        th:hover {
-            background: rgba(255,255,255,0.1);
-        }
-        
-        th.sortable::after {
-            content: '⇅';
-            margin-left: 8px;
-            opacity: 0.5;
-        }
-        
-        th.sorted-asc::after {
-            content: '↑';
-            opacity: 1;
-        }
-        
-        th.sorted-desc::after {
-            content: '↓';
-            opacity: 1;
-        }
-        
-        td {
-            padding: 15px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-        
-        tbody tr:hover {
-            background: #f8f9fa;
-        }
-        
-        .skill-tag {
-            background: #e3f2fd;
-            color: #1976d2;
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 600;
-            display: inline-block;
-            margin: 2px;
-        }
-        
-        .column-selector {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-        
-        .column-selector h4 {
-            margin-bottom: 15px;
-            color: #333;
-        }
-        
-        .checkbox-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 12px;
-        }
-        
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .checkbox-item input[type="checkbox"] {
-            width: auto;
-            cursor: pointer;
-        }
-        
-        .checkbox-item label {
-            margin: 0;
-            font-weight: normal;
-            cursor: pointer;
-        }
-        
-        .message {
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
-            display: none;
-        }
-        
-        .success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        
-        .error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        
-        .info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 40px;
-            display: none;
-        }
-        
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .filter-section {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-        
-        .filter-section h3 {
-            margin-bottom: 20px;
-            color: #333;
-        }
-        
         .required {
             color: #e74c3c;
         }
         
-        .link-card {
-            background: #f8f9fa;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 15px;
-            transition: all 0.3s;
-        }
-        
-        .link-card:hover {
-            border-color: #667eea;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
-        }
-        
-        .link-card h3 {
-            color: #333;
-            margin-bottom: 10px;
-        }
-        
-        .link-card a {
-            color: #667eea;
-            text-decoration: none;
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
             font-weight: 600;
         }
         
-        .action-cell {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
+        .badge-active {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .badge-closed {
+            background: #f8d7da;
+            color: #721c24;
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>🎯 HR Recruitment Dashboard - Enhanced</h1>
-        <p>Advanced search, filtering, and data management for recruitment</p>
+        <h1>🎯 HR Recruitment Dashboard</h1>
+        <p>Job-centric recruitment management system</p>
     </div>
     
     <div class="tabs">
-        <div class="tab active" onclick="showTab('search')">🔍 Search Candidates</div>
-        <div class="tab" onclick="showTab('create-job')">📝 Create Job Posting</div>
-        <div class="tab" onclick="showTab('links')">🔗 Application Forms</div>
+        <div class="tab active" onclick="showTab('jobs')">📋 All Jobs</div>
+        <div class="tab" onclick="showTab('create-job')">➕ Create Job</div>
+        <div class="tab" onclick="showTab('search')">🔍 Search Candidates</div>
+        <div class="tab" onclick="showTab('links')">🔗 Links</div>
     </div>
     
-    <!-- SEARCH TAB -->
-    <div id="search-tab" class="content active">
-        <h2 style="margin-bottom: 20px;">🔍 Advanced Candidate Search</h2>
+    <!-- ALL JOBS TAB -->
+    <div id="jobs-tab" class="content active">
+        <h2 style="margin-bottom: 20px;">📋 Job Postings</h2>
         
-        <div class="filter-section">
-            <h3>Search Filters</h3>
-            <form id="searchForm">
-                <div class="row-3">
-                    <div class="form-group">
-                        <label>Location</label>
-                        <input type="text" name="location" placeholder="e.g., Delhi, Mumbai">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Status</label>
-                        <select name="status">
-                            <option value="">All Statuses</option>
-                            <option value="new">New</option>
-                            <option value="screening">Screening</option>
-                            <option value="interview">Interview</option>
-                            <option value="selected">Selected</option>
-                            <option value="rejected">Rejected</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Job ID</label>
-                        <input type="text" name="job_id" placeholder="e.g., JOB_1234567890">
-                    </div>
-                </div>
-                
-                <div class="row-3">
-                    <div class="form-group">
-                        <label>Min Experience (years)</label>
-                        <input type="number" name="min_experience" value="0" min="0" max="50">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Max Experience (years)</label>
-                        <input type="number" name="max_experience" value="50" min="0" max="50">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Qualification</label>
-                        <input type="text" name="qualification" placeholder="e.g., B.Tech, MBA, M.Sc">
-                    </div>
-                </div>
-                
-                <div class="row">
-                    <div class="form-group">
-                        <label>Skills (comma-separated)</label>
-                        <input type="text" name="skills" placeholder="e.g., React, Python, Node.js, AWS">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Company</label>
-                        <input type="text" name="company" placeholder="e.g., Google, Microsoft">
-                    </div>
-                </div>
-                
-                <button type="submit">🔍 Search Candidates</button>
-                <button type="button" onclick="resetFilters()" class="btn-secondary" style="margin-left: 10px;">Clear Filters</button>
-            </form>
-        </div>
-        
-        <div class="column-selector" id="columnSelector" style="display: none;">
-            <h4>📊 Select Columns to Display</h4>
-            <div class="checkbox-grid">
-                <div class="checkbox-item">
-                    <input type="checkbox" id="col-name" value="name" checked>
-                    <label for="col-name">Name</label>
-                </div>
-                <div class="checkbox-item">
-                    <input type="checkbox" id="col-email" value="email" checked>
-                    <label for="col-email">Email</label>
-                </div>
-                <div class="checkbox-item">
-                    <input type="checkbox" id="col-phone" value="phone" checked>
-                    <label for="col-phone">Phone</label>
-                </div>
-                <div class="checkbox-item">
-                    <input type="checkbox" id="col-location" value="location" checked>
-                    <label for="col-location">Location</label>
-                </div>
-                <div class="checkbox-item">
-                    <input type="checkbox" id="col-experience" value="total_experience" checked>
-                    <label for="col-experience">Experience</label>
-                </div>
-                <div class="checkbox-item">
-                    <input type="checkbox" id="col-company" value="current_company" checked>
-                    <label for="col-company">Company</label>
-                </div>
-                <div class="checkbox-item">
-                    <input type="checkbox" id="col-role" value="current_role" checked>
-                    <label for="col-role">Role</label>
-                </div>
-                <div class="checkbox-item">
-                    <input type="checkbox" id="col-education" value="education" checked>
-                    <label for="col-education">Education</label>
-                </div>
-                <div class="checkbox-item">
-                    <input type="checkbox" id="col-skills" value="skills" checked>
-                    <label for="col-skills">Skills</label>
-                </div>
-                <div class="checkbox-item">
-                    <input type="checkbox" id="col-status" value="status" checked>
-                    <label for="col-status">Status</label>
-                </div>
-                <div class="checkbox-item">
-                    <input type="checkbox" id="col-applied-date" value="applied_date">
-                    <label for="col-applied-date">Applied Date</label>
-                </div>
-                <div class="checkbox-item">
-                    <input type="checkbox" id="col-job-id" value="applied_for_job_id">
-                    <label for="col-job-id">Job ID</label>
-                </div>
-            </div>
-            <button onclick="applyColumnSelection()" class="btn-small" style="margin-top: 15px;">Apply Selection</button>
-        </div>
-        
-        <div class="loading" id="searchLoading">
+        <div class="loading" id="jobsLoading">
             <div class="spinner"></div>
-            <p>Searching candidates...</p>
+            <p>Loading jobs...</p>
         </div>
         
-        <div id="searchMessage" class="message"></div>
+        <div id="jobsMessage" class="message"></div>
         
-        <div id="resultsContainer" style="display: none;">
-            <div class="results-header">
-                <div class="results-count" id="resultsCount">0 candidates found</div>
-                <div class="action-buttons">
-                    <button onclick="toggleColumnSelector()" class="btn-small btn-secondary">⚙️ Select Columns</button>
-                    <button onclick="exportToCSV()" class="btn-small btn-success">📥 Export CSV</button>
-                    <button onclick="exportToExcel()" class="btn-small btn-success">📥 Export Excel</button>
-                </div>
-            </div>
-            
-            <div class="table-container">
-                <table id="resultsTable">
-                    <thead id="tableHead"></thead>
-                    <tbody id="tableBody"></tbody>
-                </table>
-            </div>
-        </div>
+        <div class="jobs-grid" id="jobsGrid"></div>
     </div>
     
     <!-- CREATE JOB TAB -->
     <div id="create-job-tab" class="content">
-        <h2 style="margin-bottom: 20px;">📝 Create New Job Posting</h2>
+        <h2 style="margin-bottom: 20px;">➕ Create New Job Posting</h2>
         
         <form id="jobForm">
             <div class="form-group">
@@ -545,7 +394,7 @@
             
             <div class="form-group">
                 <label>Job Description <span class="required">*</span></label>
-                <textarea name="job_description" required placeholder="Describe the role, responsibilities, and requirements in detail..."></textarea>
+                <textarea name="job_description" required placeholder="Describe the role..."></textarea>
             </div>
             
             <div class="row-3">
@@ -572,8 +421,8 @@
             
             <div class="row-3">
                 <div class="form-group">
-                    <label>Min Experience (years) <span class="required">*</span></label>
-                    <input type="number" name="min_experience" required value="0" min="0">
+                    <label>Min Experience (years)</label>
+                    <input type="number" name="min_experience" value="0" min="0">
                 </div>
                 
                 <div class="form-group">
@@ -582,8 +431,8 @@
                 </div>
                 
                 <div class="form-group">
-                    <label>Required Qualification</label>
-                    <input type="text" name="qualification" placeholder="e.g., B.Tech/B.E. in Computer Science">
+                    <label>Number of Openings</label>
+                    <input type="number" name="openings" value="1" min="1">
                 </div>
             </div>
             
@@ -594,366 +443,263 @@
                 </div>
                 
                 <div class="form-group">
-                    <label>Number of Openings</label>
-                    <input type="number" name="openings" value="1" min="1">
+                    <label>Qualification</label>
+                    <input type="text" name="qualification" placeholder="e.g., B.Tech in CS">
                 </div>
             </div>
             
             <div class="form-group">
                 <label>Required Skills (comma-separated)</label>
-                <input type="text" name="required_skills" placeholder="e.g., React, Node.js, MongoDB, AWS">
+                <input type="text" name="required_skills" placeholder="e.g., React, Node.js, MongoDB">
             </div>
             
             <div class="form-group">
                 <label>Key Responsibilities</label>
-                <textarea name="responsibilities" placeholder="List the main responsibilities for this role..."></textarea>
+                <textarea name="responsibilities" placeholder="List main responsibilities..."></textarea>
             </div>
             
             <button type="submit">Create Job Posting</button>
         </form>
         
-        <div class="loading" id="jobLoading">
+        <div class="loading" id="createJobLoading">
             <div class="spinner"></div>
-            <p>Creating job posting...</p>
+            <p>Creating job...</p>
         </div>
         
-        <div id="jobMessage" class="message"></div>
+        <div id="createJobMessage" class="message"></div>
+    </div>
+    
+    <!-- SEARCH CANDIDATES TAB -->
+    <div id="search-tab" class="content">
+        <h2 style="margin-bottom: 20px;">🔍 Search Candidates</h2>
+        
+        <form id="searchForm">
+            <div class="row-3">
+                <div class="form-group">
+                    <label>Job ID</label>
+                    <select id="searchJobId" name="job_id">
+                        <option value="">All Jobs</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Location</label>
+                    <input type="text" name="location" placeholder="e.g., Mumbai">
+                </div>
+                
+                <div class="form-group">
+                    <label>Status</label>
+                    <select name="status">
+                        <option value="">All</option>
+                        <option value="new">New</option>
+                        <option value="screening">Screening</option>
+                        <option value="interview">Interview</option>
+                        <option value="selected">Selected</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="form-group">
+                    <label>Skills</label>
+                    <input type="text" name="skills" placeholder="e.g., React, Python">
+                </div>
+                
+                <div class="form-group">
+                    <label>Qualification</label>
+                    <input type="text" name="qualification" placeholder="e.g., B.Tech">
+                </div>
+            </div>
+            
+            <button type="submit">Search Candidates</button>
+        </form>
+        
+        <div class="loading" id="searchLoading">
+            <div class="spinner"></div>
+            <p>Searching...</p>
+        </div>
+        
+        <div id="searchMessage" class="message"></div>
+        
+        <div class="table-container" id="searchResults" style="display: none;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Location</th>
+                        <th>Experience</th>
+                        <th>Skills</th>
+                        <th>Status</th>
+                        <th>Applied For</th>
+                    </tr>
+                </thead>
+                <tbody id="searchTableBody"></tbody>
+            </table>
+        </div>
     </div>
     
     <!-- LINKS TAB -->
     <div id="links-tab" class="content">
-        <h2 style="margin-bottom: 20px;">🔗 Application Forms & Resources</h2>
+        <h2 style="margin-bottom: 20px;">🔗 Important Links</h2>
         
         <div class="link-card">
-            <h3>📋 Candidate Application Form</h3>
-            <p style="margin: 10px 0; color: #666;">Share this link with candidates to apply for positions</p>
-            <a href="https://grover8.github.io/hr-recruitment-system/candidate_application_form.html" target="_blank">Open Application Form →</a>
+            <h3>🌐 Public Job Portal</h3>
+            <p style="margin: 10px 0; color: #666;">Share this link publicly for candidates to browse and apply</p>
+            <a href="https://grover8.github.io/hr-recruitment-system/job_portal.html" target="_blank">
+                Open Job Portal →
+            </a>
+        </div>
+        
+        <div class="link-card">
+            <h3>📋 Direct Application Form</h3>
+            <p style="margin: 10px 0; color: #666;">Direct link for candidates to submit applications</p>
+            <a href="https://grover8.github.io/hr-recruitment-system/candidate_application_form.html" target="_blank">
+                Open Application Form →
+            </a>
         </div>
         
         <div class="link-card">
             <h3>📊 Google Sheets Database</h3>
-            <p style="margin: 10px 0; color: #666;">View and manage all recruitment data</p>
-            <a href="https://docs.google.com/spreadsheets/d/12SY44opAnWer68CMicfZZz_lsn09G_hDPD2nXXr7lbk" target="_blank">Open Google Sheet →</a>
-        </div>
-        
-        <div class="link-card">
-            <h3>📁 Resume Storage</h3>
-            <p style="margin: 10px 0; color: #666;">Access all uploaded resumes in Google Drive</p>
-            <a href="https://drive.google.com/drive/folders/12SY44opAnWer68CMicfZZz_lsn09G_hDPD2nXXr7lbk" target="_blank">Open Drive Folder →</a>
+            <p style="margin: 10px 0; color: #666;">View and manage all data</p>
+            <a href="https://docs.google.com/spreadsheets/d/12SY44opAnWer68CMicfZZz_lsn09G_hDPD2nXXr7lbk" target="_blank">
+                Open Google Sheet →
+            </a>
         </div>
     </div>
 
     <script>
-        // ========== CONFIGURATION ==========
         const WEBHOOKS = {
+            getAllJobs: 'https://n8n.srv1163004.hstgr.cloud/webhook/get-all-jobs',
+            getActiveJobs: 'https://n8n.srv1163004.hstgr.cloud/webhook/get-active-jobs',
+            createJob: 'https://n8n.srv1163004.hstgr.cloud/webhook/create-job',
             searchCandidates: 'https://n8n.srv1163004.hstgr.cloud/webhook/search-candidates',
-            createJob: 'https://n8n.srv1163004.hstgr.cloud/webhook/create-job'
+            getCandidatesByJob: 'https://n8n.srv1163004.hstgr.cloud/webhook/get-candidates-by-job'
         };
-
-        let currentResults = [];
-        let selectedColumns = ['name', 'email', 'phone', 'location', 'total_experience', 'current_company', 'current_role', 'education', 'skills', 'status'];
         
-        // ========== TAB SWITCHING ==========
+        let allJobs = [];
+        
+        // Tab switching
         function showTab(tabName) {
-            document.querySelectorAll('.content').forEach(content => {
-                content.classList.remove('active');
-            });
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
+            document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             
             document.getElementById(tabName + '-tab').classList.add('active');
             event.target.classList.add('active');
+            
+            if (tabName === 'jobs') {
+                loadAllJobs();
+            } else if (tabName === 'search') {
+                populateJobFilter();
+            }
         }
         
-        // ========== SEARCH CANDIDATES ==========
-        document.getElementById('searchForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const formData = new FormData(e.target);
-            const searchParams = {
-                location: formData.get('location'),
-                min_experience: formData.get('min_experience'),
-                max_experience: formData.get('max_experience'),
-                skills: formData.get('skills'),
-                status: formData.get('status'),
-                qualification: formData.get('qualification'),
-                company: formData.get('company'),
-                job_id: formData.get('job_id')
-            };
-            
-            const loading = document.getElementById('searchLoading');
-            const message = document.getElementById('searchMessage');
-            const resultsContainer = document.getElementById('resultsContainer');
+        // Load all jobs
+        async function loadAllJobs() {
+            const loading = document.getElementById('jobsLoading');
+            const message = document.getElementById('jobsMessage');
+            const grid = document.getElementById('jobsGrid');
             
             loading.style.display = 'block';
             message.style.display = 'none';
-            resultsContainer.style.display = 'none';
+            grid.innerHTML = '';
             
             try {
-                const response = await fetch(WEBHOOKS.searchCandidates, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(searchParams)
-                });
-                
+                const response = await fetch(WEBHOOKS.getAllJobs);
                 const data = await response.json();
                 
                 loading.style.display = 'none';
                 
-                if (data.results && data.results.length > 0) {
-                    currentResults = data.results;
-                    displayResults(data.results);
-                    resultsContainer.style.display = 'block';
-                    document.getElementById('resultsCount').textContent = `${data.results.length} candidate(s) found`;
+                if (data.jobs && data.jobs.length > 0) {
+                    allJobs = data.jobs;
+                    displayJobCards(data.jobs);
                 } else {
                     message.className = 'message info';
+                    message.textContent = 'No jobs found';
                     message.style.display = 'block';
-                    message.innerHTML = '<strong>No candidates found</strong><br>Try adjusting your search criteria.';
                 }
             } catch (error) {
                 loading.style.display = 'none';
                 message.className = 'message error';
-                message.innerHTML = `<strong>Error:</strong> ${error.message}`;
+                message.textContent = 'Error: ' + error.message;
                 message.style.display = 'block';
             }
-        });
+        }
         
-        // ========== DISPLAY RESULTS ==========
-        function displayResults(results) {
-            const tableHead = document.getElementById('tableHead');
-            const tableBody = document.getElementById('tableBody');
+        // Display job cards
+        function displayJobCards(jobs) {
+            const grid = document.getElementById('jobsGrid');
             
-            const columnLabels = {
-                name: 'Name',
-                email: 'Email',
-                phone: 'Phone',
-                location: 'Location',
-                total_experience: 'Experience',
-                current_company: 'Company',
-                current_role: 'Role',
-                education: 'Education',
-                skills: 'Skills',
-                status: 'Status',
-                applied_date: 'Applied Date',
-                applied_for_job_id: 'Job ID'
-            };
-            
-            // Create table header
-            let headerHTML = '<tr>';
-            selectedColumns.forEach(col => {
-                headerHTML += `<th class="sortable" onclick="sortTable('${col}')">${columnLabels[col]}</th>`;
-            });
-            headerHTML += '<th>Actions</th></tr>';
-            tableHead.innerHTML = headerHTML;
-            
-            // Create table body
-            let bodyHTML = '';
-            results.forEach(candidate => {
-                bodyHTML += '<tr>';
-                selectedColumns.forEach(col => {
-                    let value = candidate[col] || 'N/A';
+            grid.innerHTML = jobs.map(job => `
+                <div class="job-card" onclick="viewJobCandidates('${job.job_id}')">
+                    <div class="job-card-header">
+                        <div class="job-title">${job.job_title}</div>
+                        <div class="job-id">${job.job_id}</div>
+                        <span class="badge ${job.status === 'Active' ? 'badge-active' : 'badge-closed'}">
+                            ${job.status || 'Active'}
+                        </span>
+                    </div>
                     
-                    if (col === 'skills' && value !== 'N/A') {
-                        const skillsArray = value.split(',').slice(0, 5);
-                        value = skillsArray.map(s => `<span class="skill-tag">${s.trim()}</span>`).join('');
-                    } else if (col === 'total_experience') {
-                        value = `${value} years`;
-                    }
+                    <div style="margin: 15px 0; color: #666;">
+                        📍 ${job.location} • 🏢 ${job.department} • 💼 ${job.job_type}
+                    </div>
                     
-                    bodyHTML += `<td>${value}</td>`;
-                });
-                
-                bodyHTML += `<td class="action-cell">`;
-                if (candidate.resume_link) {
-                    bodyHTML += `<button class="btn-small" onclick="window.open('${candidate.resume_link}', '_blank')">📄 Resume</button>`;
-                }
-                bodyHTML += `<button class="btn-small btn-secondary" onclick="copyToClipboard('${candidate.email}')">📋 Copy Email</button>`;
-                bodyHTML += `</td></tr>`;
-            });
-            tableBody.innerHTML = bodyHTML;
+                    <div class="job-stats">
+                        <div class="stat">
+                            <div class="stat-value">${job.applications_count || 0}</div>
+                            <div class="stat-label">Applications</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">${job.openings || 1}</div>
+                            <div class="stat-label">Openings</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">${job.min_experience || 0}+</div>
+                            <div class="stat-label">Years Exp</div>
+                        </div>
+                    </div>
+                    
+                    <div class="job-actions" onclick="event.stopPropagation()">
+                        <button class="btn-small" onclick="viewJobCandidates('${job.job_id}')">
+                            👥 View Candidates
+                        </button>
+                        <button class="btn-small btn-secondary" onclick="copyJobLink('${job.job_id}')">
+                            🔗 Copy Link
+                        </button>
+                    </div>
+                </div>
+            `).join('');
         }
         
-        // ========== COLUMN SELECTOR ==========
-        function toggleColumnSelector() {
-            const selector = document.getElementById('columnSelector');
-            selector.style.display = selector.style.display === 'none' ? 'block' : 'none';
+        // View candidates for a job
+        function viewJobCandidates(jobId) {
+            // Switch to search tab and filter by job ID
+            document.getElementById('searchJobId').value = jobId;
+            showTab('search');
+            document.getElementById('searchForm').dispatchEvent(new Event('submit'));
         }
         
-        function applyColumnSelection() {
-            const checkboxes = document.querySelectorAll('.checkbox-item input[type="checkbox"]');
-            selectedColumns = [];
-            checkboxes.forEach(cb => {
-                if (cb.checked) {
-                    selectedColumns.push(cb.value);
-                }
-            });
-            
-            if (selectedColumns.length === 0) {
-                alert('Please select at least one column');
-                return;
-            }
-            
-            displayResults(currentResults);
-            toggleColumnSelector();
+        // Copy job link
+        function copyJobLink(jobId) {
+            const link = `https://grover8.github.io/hr-recruitment-system/job_portal.html?job_id=${jobId}`;
+            navigator.clipboard.writeText(link);
+            alert('Job link copied! Share this with candidates.');
         }
         
-        // ========== EXPORT FUNCTIONS ==========
-        function exportToCSV() {
-            if (currentResults.length === 0) {
-                alert('No data to export');
-                return;
-            }
-            
-            const columnLabels = {
-                name: 'Name', email: 'Email', phone: 'Phone', location: 'Location',
-                total_experience: 'Experience (Years)', current_company: 'Company',
-                current_role: 'Role', education: 'Education', skills: 'Skills',
-                status: 'Status', applied_date: 'Applied Date', applied_for_job_id: 'Job ID'
-            };
-            
-            let csv = selectedColumns.map(col => columnLabels[col]).join(',') + '\n';
-            
-            currentResults.forEach(candidate => {
-                const row = selectedColumns.map(col => {
-                    let value = candidate[col] || '';
-                    value = String(value).replace(/"/g, '""');
-                    return `"${value}"`;
-                });
-                csv += row.join(',') + '\n';
-            });
-            
-            downloadFile(csv, `candidates_export_${new Date().toISOString().split('T')[0]}.csv`, 'text/csv');
-        }
-        
-        function exportToExcel() {
-            if (currentResults.length === 0) {
-                alert('No data to export');
-                return;
-            }
-            
-            // Create Excel-compatible CSV with UTF-8 BOM
-            const columnLabels = {
-                name: 'Name', email: 'Email', phone: 'Phone', location: 'Location',
-                total_experience: 'Experience (Years)', current_company: 'Company',
-                current_role: 'Role', education: 'Education', skills: 'Skills',
-                status: 'Status', applied_date: 'Applied Date', applied_for_job_id: 'Job ID'
-            };
-            
-            let csv = '\uFEFF'; // UTF-8 BOM
-            csv += selectedColumns.map(col => columnLabels[col]).join(',') + '\n';
-            
-            currentResults.forEach(candidate => {
-                const row = selectedColumns.map(col => {
-                    let value = candidate[col] || '';
-                    value = String(value).replace(/"/g, '""');
-                    return `"${value}"`;
-                });
-                csv += row.join(',') + '\n';
-            });
-            
-            downloadFile(csv, `candidates_export_${new Date().toISOString().split('T')[0]}.xlsx`, 'text/csv');
-        }
-        
-        function downloadFile(content, filename, mimeType) {
-            const blob = new Blob([content], { type: mimeType });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-        }
-        
-        // ========== SORT TABLE ==========
-        let sortColumn = null;
-        let sortDirection = 'asc';
-        
-        function sortTable(column) {
-            if (sortColumn === column) {
-                sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
-            } else {
-                sortColumn = column;
-                sortDirection = 'asc';
-            }
-            
-            const sorted = [...currentResults].sort((a, b) => {
-                let valA = a[column] || '';
-                let valB = b[column] || '';
-                
-                // Handle numeric values
-                if (column === 'total_experience') {
-                    valA = parseFloat(valA) || 0;
-                    valB = parseFloat(valB) || 0;
-                } else {
-                    valA = String(valA).toLowerCase();
-                    valB = String(valB).toLowerCase();
-                }
-                
-                if (sortDirection === 'asc') {
-                    return valA > valB ? 1 : valA < valB ? -1 : 0;
-                } else {
-                    return valA < valB ? 1 : valA > valB ? -1 : 0;
-                }
-            });
-            
-            displayResults(sorted);
-            
-            // Update header styling
-            document.querySelectorAll('th').forEach(th => {
-                th.classList.remove('sorted-asc', 'sorted-desc');
-            });
-            
-            const headers = document.querySelectorAll('th');
-            const colIndex = selectedColumns.indexOf(column);
-            if (colIndex >= 0 && headers[colIndex]) {
-                headers[colIndex].classList.add(`sorted-${sortDirection}`);
-            }
-        }
-        
-        // ========== UTILITY FUNCTIONS ==========
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                alert(`Copied to clipboard: ${text}`);
-            }).catch(err => {
-                console.error('Failed to copy:', err);
-            });
-        }
-        
-        function resetFilters() {
-            document.getElementById('searchForm').reset();
-            document.getElementById('resultsContainer').style.display = 'none';
-            document.getElementById('searchMessage').style.display = 'none';
-            currentResults = [];
-        }
-        
-        // ========== CREATE JOB ==========
+        // Create job
         document.getElementById('jobForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            const formData = new FormData(e.target);
-            const jobData = {
-                job_title: formData.get('job_title'),
-                job_description: formData.get('job_description'),
-                location: formData.get('location'),
-                department: formData.get('department'),
-                job_type: formData.get('job_type'),
-                min_experience: parseInt(formData.get('min_experience')),
-                max_experience: parseInt(formData.get('max_experience')),
-                qualification: formData.get('qualification'),
-                salary_range: formData.get('salary_range'),
-                openings: parseInt(formData.get('openings')),
-                required_skills: formData.get('required_skills'),
-                responsibilities: formData.get('responsibilities')
-            };
-            
-            const loading = document.getElementById('jobLoading');
-            const message = document.getElementById('jobMessage');
+            const loading = document.getElementById('createJobLoading');
+            const message = document.getElementById('createJobMessage');
             
             loading.style.display = 'block';
             message.style.display = 'none';
+            
+            const formData = new FormData(e.target);
+            const jobData = Object.fromEntries(formData);
             
             try {
                 const response = await fetch(WEBHOOKS.createJob, {
@@ -968,25 +714,97 @@
                 
                 if (data.success) {
                     message.className = 'message success';
-                    message.innerHTML = `
-                        <strong>✅ Job Created Successfully!</strong><br><br>
-                        Job ID: ${data.job_id || 'Generated'}<br>
-                        Title: ${jobData.job_title}
-                    `;
+                    message.innerHTML = `✅ Job created! ID: ${data.job_id}`;
                     e.target.reset();
                 } else {
-                    throw new Error(data.message || 'Failed to create job');
+                    throw new Error(data.message);
                 }
                 
                 message.style.display = 'block';
             } catch (error) {
                 loading.style.display = 'none';
                 message.className = 'message error';
-                message.innerHTML = `<strong>Error:</strong> ${error.message}`;
+                message.textContent = 'Error: ' + error.message;
                 message.style.display = 'block';
             }
+        });
+        
+        // Search candidates
+        document.getElementById('searchForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const loading = document.getElementById('searchLoading');
+            const message = document.getElementById('searchMessage');
+            const results = document.getElementById('searchResults');
+            const tbody = document.getElementById('searchTableBody');
+            
+            loading.style.display = 'block';
+            message.style.display = 'none';
+            results.style.display = 'none';
+            
+            const formData = new FormData(e.target);
+            const searchParams = Object.fromEntries(formData);
+            
+            try {
+                const response = await fetch(WEBHOOKS.searchCandidates, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(searchParams)
+                });
+                
+                const data = await response.json();
+                
+                loading.style.display = 'none';
+                
+                if (data.results && data.results.length > 0) {
+                    tbody.innerHTML = data.results.map(c => `
+                        <tr>
+                            <td>${c.name}</td>
+                            <td>${c.email}</td>
+                            <td>${c.phone}</td>
+                            <td>${c.location}</td>
+                            <td>${c.total_experience} yrs</td>
+                            <td>${(c.skills || '').substring(0, 50)}...</td>
+                            <td>${c.status}</td>
+                            <td>${c.applied_for_job_id || 'N/A'}</td>
+                        </tr>
+                    `).join('');
+                    results.style.display = 'block';
+                } else {
+                    message.className = 'message info';
+                    message.textContent = 'No candidates found';
+                    message.style.display = 'block';
+                }
+            } catch (error) {
+                loading.style.display = 'none';
+                message.className = 'message error';
+                message.textContent = 'Error: ' + error.message;
+                message.style.display = 'block';
+            }
+        });
+        
+        // Populate job filter dropdown
+        async function populateJobFilter() {
+            try {
+                const response = await fetch(WEBHOOKS.getAllJobs);
+                const data = await response.json();
+                
+                if (data.jobs) {
+                    const select = document.getElementById('searchJobId');
+                    select.innerHTML = '<option value="">All Jobs</option>' +
+                        data.jobs.map(job => 
+                            `<option value="${job.job_id}">${job.job_title} (${job.job_id})</option>`
+                        ).join('');
+                }
+            } catch (error) {
+                console.error('Error loading jobs for filter:', error);
+            }
+        }
+        
+        // Load jobs on page load
+        window.addEventListener('load', () => {
+            loadAllJobs();
         });
     </script>
 </body>
 </html>
-            
