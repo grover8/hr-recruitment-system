@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HR Recruitment Dashboard - Fixed</title>
+    <title>HR Recruitment Dashboard - Job-Centric</title>
     <style>
         * {
             margin: 0;
@@ -77,6 +77,7 @@
             display: block;
         }
         
+        /* Job Cards Grid */
         .jobs-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -97,6 +98,10 @@
             border-color: #667eea;
             transform: translateY(-3px);
             box-shadow: 0 6px 20px rgba(102, 126, 234, 0.2);
+        }
+        
+        .job-card-header {
+            margin-bottom: 15px;
         }
         
         .job-title {
@@ -138,6 +143,12 @@
             margin-top: 3px;
         }
         
+        .job-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 15px;
+        }
+        
         button {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -162,6 +173,14 @@
         
         .btn-secondary {
             background: #6c757d;
+        }
+        
+        .btn-success {
+            background: #28a745;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
         }
         
         .loading {
@@ -210,32 +229,111 @@
             border: 1px solid #bee5eb;
         }
         
-        .warning {
-            background: #fff3cd;
-            color: #856404;
-            border: 1px solid #ffeaa7;
-        }
-        
-        .debug-panel {
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            padding: 15px;
-            margin-top: 20px;
-            font-family: monospace;
-            font-size: 12px;
-        }
-        
-        .debug-panel h4 {
-            margin-bottom: 10px;
-            color: #333;
-        }
-        
-        .debug-panel pre {
-            background: white;
-            padding: 10px;
-            border-radius: 4px;
+        /* Candidates Table */
+        .table-container {
             overflow-x: auto;
+            margin-top: 20px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        
+        tbody tr {
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .link-card {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+        
+        .link-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+        
+        .link-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .link-card a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        .link-card a:hover {
+            text-decoration: underline;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .row-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .required {
+            color: #e74c3c;
         }
         
         .badge {
@@ -251,23 +349,9 @@
             color: #155724;
         }
         
-        .link-card {
-            background: #f8f9fa;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            padding: 25px;
-            margin-bottom: 20px;
-        }
-        
-        .link-card h3 {
-            color: #333;
-            margin-bottom: 10px;
-        }
-        
-        .link-card a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 600;
+        .badge-closed {
+            background: #f8d7da;
+            color: #721c24;
         }
     </style>
 </head>
@@ -279,18 +363,14 @@
     
     <div class="tabs">
         <div class="tab active" onclick="showTab('jobs')">📋 All Jobs</div>
-        <div class="tab" onclick="showTab('debug')">🔧 Debug & Config</div>
+        <div class="tab" onclick="showTab('create-job')">➕ Create Job</div>
+        <div class="tab" onclick="showTab('search')">🔍 Search Candidates</div>
         <div class="tab" onclick="showTab('links')">🔗 Links</div>
     </div>
     
     <!-- ALL JOBS TAB -->
     <div id="jobs-tab" class="content active">
         <h2 style="margin-bottom: 20px;">📋 Job Postings</h2>
-        
-        <div style="margin-bottom: 20px;">
-            <button onclick="loadAllJobs()">🔄 Refresh Jobs</button>
-            <button onclick="testWebhook()" class="btn-secondary">🧪 Test Webhook</button>
-        </div>
         
         <div class="loading" id="jobsLoading">
             <div class="spinner"></div>
@@ -302,54 +382,162 @@
         <div class="jobs-grid" id="jobsGrid"></div>
     </div>
     
-    <!-- DEBUG TAB -->
-    <div id="debug-tab" class="content">
-        <h2 style="margin-bottom: 20px;">🔧 Debug & Configuration</h2>
+    <!-- CREATE JOB TAB -->
+    <div id="create-job-tab" class="content">
+        <h2 style="margin-bottom: 20px;">➕ Create New Job Posting</h2>
         
-        <div class="message warning" style="display: block;">
-            ⚠️ <strong>Current Issue:</strong> JSON parsing error when fetching jobs. Use this tab to diagnose the problem.
-        </div>
-        
-        <div style="margin: 20px 0;">
-            <h3 style="margin-bottom: 10px;">Webhook Configuration</h3>
-            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
-                <p style="margin-bottom: 10px;"><strong>Get All Jobs:</strong></p>
-                <code style="background: white; padding: 8px; display: block; border-radius: 4px; word-break: break-all;">
-                    https://n8n.srv1163004.hstgr.cloud/webhook/get-all-jobs
-                </code>
+        <form id="jobForm">
+            <div class="form-group">
+                <label>Job Title <span class="required">*</span></label>
+                <input type="text" name="job_title" required placeholder="e.g., Senior React Developer">
             </div>
-        </div>
-        
-        <div style="margin: 20px 0;">
-            <button onclick="runDiagnostics()">🔍 Run Full Diagnostics</button>
-            <button onclick="clearDebugLog()" class="btn-secondary">🗑️ Clear Log</button>
-        </div>
-        
-        <div class="debug-panel" id="debugLog">
-            <h4>Debug Log</h4>
-            <pre id="debugContent">Click "Run Full Diagnostics" to start...</pre>
-        </div>
-        
-        <div style="margin-top: 20px;">
-            <h3 style="margin-bottom: 10px;">Common Issues & Solutions</h3>
-            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
-                <div style="margin-bottom: 15px;">
-                    <strong>1. CORS Error:</strong>
-                    <p style="color: #666; margin: 5px 0;">The webhook must include CORS headers. Check n8n "Respond to Webhook" node settings.</p>
+            
+            <div class="form-group">
+                <label>Job Description <span class="required">*</span></label>
+                <textarea name="job_description" required placeholder="Describe the role..."></textarea>
+            </div>
+            
+            <div class="row-3">
+                <div class="form-group">
+                    <label>Location <span class="required">*</span></label>
+                    <input type="text" name="location" required placeholder="e.g., Delhi">
                 </div>
-                <div style="margin-bottom: 15px;">
-                    <strong>2. Empty Response:</strong>
-                    <p style="color: #666; margin: 5px 0;">Verify Google Sheets connection and that Jobs_Clean sheet has data.</p>
+                
+                <div class="form-group">
+                    <label>Department <span class="required">*</span></label>
+                    <input type="text" name="department" required placeholder="e.g., Engineering">
                 </div>
-                <div style="margin-bottom: 15px;">
-                    <strong>3. Workflow Not Active:</strong>
-                    <p style="color: #666; margin: 5px 0;">Ensure the n8n workflow is activated and the webhook is responding.</p>
-                </div>
-                <div>
-                    <strong>4. Invalid JSON:</strong>
-                    <p style="color: #666; margin: 5px 0;">Check the n8n Code node for syntax errors or malformed JSON.</p>
+                
+                <div class="form-group">
+                    <label>Job Type <span class="required">*</span></label>
+                    <select name="job_type" required>
+                        <option value="Full-time">Full-time</option>
+                        <option value="Part-time">Part-time</option>
+                        <option value="Contract">Contract</option>
+                        <option value="Internship">Internship</option>
+                    </select>
                 </div>
             </div>
+            
+            <div class="row-3">
+                <div class="form-group">
+                    <label>Min Experience (years)</label>
+                    <input type="number" name="min_experience" value="0" min="0">
+                </div>
+                
+                <div class="form-group">
+                    <label>Max Experience (years)</label>
+                    <input type="number" name="max_experience" value="15" min="0">
+                </div>
+                
+                <div class="form-group">
+                    <label>Number of Openings</label>
+                    <input type="number" name="openings" value="1" min="1">
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="form-group">
+                    <label>Salary Range</label>
+                    <input type="text" name="salary_range" placeholder="e.g., 15-20 LPA">
+                </div>
+                
+                <div class="form-group">
+                    <label>Qualification</label>
+                    <input type="text" name="qualification" placeholder="e.g., B.Tech in CS">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Required Skills (comma-separated)</label>
+                <input type="text" name="required_skills" placeholder="e.g., React, Node.js, MongoDB">
+            </div>
+            
+            <div class="form-group">
+                <label>Key Responsibilities</label>
+                <textarea name="responsibilities" placeholder="List main responsibilities..."></textarea>
+            </div>
+            
+            <button type="submit">Create Job Posting</button>
+        </form>
+        
+        <div class="loading" id="createJobLoading">
+            <div class="spinner"></div>
+            <p>Creating job...</p>
+        </div>
+        
+        <div id="createJobMessage" class="message"></div>
+    </div>
+    
+    <!-- SEARCH CANDIDATES TAB -->
+    <div id="search-tab" class="content">
+        <h2 style="margin-bottom: 20px;">🔍 Search Candidates</h2>
+        
+        <form id="searchForm">
+            <div class="row-3">
+                <div class="form-group">
+                    <label>Job ID</label>
+                    <select id="searchJobId" name="job_id">
+                        <option value="">All Jobs</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Location</label>
+                    <input type="text" name="location" placeholder="e.g., Mumbai">
+                </div>
+                
+                <div class="form-group">
+                    <label>Status</label>
+                    <select name="status">
+                        <option value="">All</option>
+                        <option value="new">New</option>
+                        <option value="screening">Screening</option>
+                        <option value="interview">Interview</option>
+                        <option value="selected">Selected</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="form-group">
+                    <label>Skills</label>
+                    <input type="text" name="skills" placeholder="e.g., React, Python">
+                </div>
+                
+                <div class="form-group">
+                    <label>Qualification</label>
+                    <input type="text" name="qualification" placeholder="e.g., B.Tech">
+                </div>
+            </div>
+            
+            <button type="submit">Search Candidates</button>
+        </form>
+        
+        <div class="loading" id="searchLoading">
+            <div class="spinner"></div>
+            <p>Searching...</p>
+        </div>
+        
+        <div id="searchMessage" class="message"></div>
+        
+        <div class="table-container" id="searchResults" style="display: none;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Location</th>
+                        <th>Experience</th>
+                        <th>Skills</th>
+                        <th>Status</th>
+                        <th>Applied For</th>
+                    </tr>
+                </thead>
+                <tbody id="searchTableBody"></tbody>
+            </table>
         </div>
     </div>
     
@@ -359,9 +547,17 @@
         
         <div class="link-card">
             <h3>🌐 Public Job Portal</h3>
-            <p style="margin: 10px 0; color: #666;">Share this link publicly for candidates</p>
+            <p style="margin: 10px 0; color: #666;">Share this link publicly for candidates to browse and apply</p>
             <a href="https://grover8.github.io/hr-recruitment-system/job_portal.html" target="_blank">
                 Open Job Portal →
+            </a>
+        </div>
+        
+        <div class="link-card">
+            <h3>📋 Direct Application Form</h3>
+            <p style="margin: 10px 0; color: #666;">Direct link for candidates to submit applications</p>
+            <a href="https://grover8.github.io/hr-recruitment-system/candidate_application_form.html" target="_blank">
+                Open Application Form →
             </a>
         </div>
         
@@ -372,118 +568,35 @@
                 Open Google Sheet →
             </a>
         </div>
-        
-        <div class="link-card">
-            <h3>⚙️ n8n Workflows</h3>
-            <p style="margin: 10px 0; color: #666;">Access your automation platform</p>
-            <a href="https://n8n.srv1163004.hstgr.cloud" target="_blank">
-                Open n8n →
-            </a>
-        </div>
     </div>
 
     <script>
         const WEBHOOKS = {
             getAllJobs: 'https://n8n.srv1163004.hstgr.cloud/webhook/get-all-jobs',
-            getActiveJobs: 'https://n8n.srv1163004.hstgr.cloud/webhook/get-active-jobs'
+            getActiveJobs: 'https://n8n.srv1163004.hstgr.cloud/webhook/get-active-jobs',
+            createJob: 'https://n8n.srv1163004.hstgr.cloud/webhook/create-job',
+            searchCandidates: 'https://n8n.srv1163004.hstgr.cloud/webhook/search-candidates',
+            getCandidatesByJob: 'https://n8n.srv1163004.hstgr.cloud/webhook/get-candidates-by-job'
         };
         
         let allJobs = [];
-        let debugMessages = [];
         
-        function log(message, type = 'info') {
-            const timestamp = new Date().toLocaleTimeString();
-            debugMessages.push(`[${timestamp}] [${type.toUpperCase()}] ${message}`);
-            updateDebugLog();
-            console.log(`[${type}]`, message);
-        }
-        
-        function updateDebugLog() {
-            const content = document.getElementById('debugContent');
-            if (content) {
-                content.textContent = debugMessages.join('\n');
-            }
-        }
-        
-        function clearDebugLog() {
-            debugMessages = [];
-            updateDebugLog();
-        }
-        
+        // Tab switching
         function showTab(tabName) {
             document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             
             document.getElementById(tabName + '-tab').classList.add('active');
             event.target.classList.add('active');
-        }
-        
-        async function testWebhook() {
-            log('Testing webhook connection...');
             
-            try {
-                log(`Making request to: ${WEBHOOKS.getAllJobs}`);
-                
-                const response = await fetch(WEBHOOKS.getAllJobs, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json'
-                    }
-                });
-                
-                log(`Response status: ${response.status} ${response.statusText}`);
-                log(`Response headers: ${JSON.stringify([...response.headers.entries()])}`);
-                
-                const contentType = response.headers.get('content-type');
-                log(`Content-Type: ${contentType}`);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const text = await response.text();
-                log(`Response length: ${text.length} characters`);
-                log(`Response preview: ${text.substring(0, 200)}...`);
-                
-                try {
-                    const data = JSON.parse(text);
-                    log('✅ JSON parsing successful!');
-                    log(`Data structure: ${JSON.stringify(data, null, 2)}`);
-                    return data;
-                } catch (parseError) {
-                    log(`❌ JSON parse error: ${parseError.message}`, 'error');
-                    log(`Raw response: ${text}`, 'error');
-                    throw parseError;
-                }
-                
-            } catch (error) {
-                log(`❌ Webhook test failed: ${error.message}`, 'error');
-                throw error;
+            if (tabName === 'jobs') {
+                loadAllJobs();
+            } else if (tabName === 'search') {
+                populateJobFilter();
             }
         }
         
-        async function runDiagnostics() {
-            clearDebugLog();
-            log('=== Starting Full Diagnostics ===');
-            
-            log('Step 1: Testing webhook endpoint...');
-            try {
-                const data = await testWebhook();
-                log('✅ Webhook test passed!');
-                
-                if (data.jobs) {
-                    log(`Found ${data.jobs.length} jobs in response`);
-                    if (data.jobs.length > 0) {
-                        log(`Sample job: ${JSON.stringify(data.jobs[0], null, 2)}`);
-                    }
-                }
-            } catch (error) {
-                log('❌ Webhook test failed - see details above', 'error');
-            }
-            
-            log('\n=== Diagnostics Complete ===');
-        }
-        
+        // Load all jobs
         async function loadAllJobs() {
             const loading = document.getElementById('jobsLoading');
             const message = document.getElementById('jobsMessage');
@@ -493,83 +606,44 @@
             message.style.display = 'none';
             grid.innerHTML = '';
             
-            log('Loading all jobs...');
-            
             try {
-                const response = await fetch(WEBHOOKS.getAllJobs, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json'
-                    }
-                });
-                
-                log(`Response status: ${response.status}`);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                }
-                
-                const text = await response.text();
-                log(`Received ${text.length} characters`);
-                
-                let data;
-                try {
-                    data = JSON.parse(text);
-                    log('JSON parsed successfully');
-                } catch (parseError) {
-                    log(`JSON parse error: ${parseError.message}`, 'error');
-                    log(`Response: ${text.substring(0, 500)}`, 'error');
-                    throw new Error('Invalid JSON response from server');
-                }
+                const response = await fetch(WEBHOOKS.getAllJobs);
+                const data = await response.json();
                 
                 loading.style.display = 'none';
                 
-                if (data.success === false) {
-                    throw new Error(data.message || 'Request failed');
-                }
-                
                 if (data.jobs && data.jobs.length > 0) {
                     allJobs = data.jobs;
-                    log(`Displaying ${data.jobs.length} jobs`);
                     displayJobCards(data.jobs);
                 } else {
-                    log('No jobs found in response', 'warning');
                     message.className = 'message info';
-                    message.innerHTML = '📭 No jobs found. Click "Test Webhook" in Debug tab to diagnose.';
+                    message.textContent = 'No jobs found';
                     message.style.display = 'block';
                 }
             } catch (error) {
                 loading.style.display = 'none';
-                log(`Error loading jobs: ${error.message}`, 'error');
-                
                 message.className = 'message error';
-                message.innerHTML = `
-                    <strong>❌ Error loading jobs:</strong><br>
-                    ${error.message}<br><br>
-                    <strong>Troubleshooting:</strong>
-                    <ul style="margin: 10px 0; padding-left: 20px;">
-                        <li>Check if n8n workflow is active</li>
-                        <li>Verify Google Sheets connection</li>
-                        <li>Go to Debug tab for detailed diagnostics</li>
-                    </ul>
-                `;
+                message.textContent = 'Error: ' + error.message;
                 message.style.display = 'block';
             }
         }
         
+        // Display job cards
         function displayJobCards(jobs) {
             const grid = document.getElementById('jobsGrid');
             
             grid.innerHTML = jobs.map(job => `
-                <div class="job-card">
-                    <div style="margin-bottom: 15px;">
-                        <div class="job-title">${job.job_title || 'Untitled'}</div>
-                        <div class="job-id">${job.job_id || 'No ID'}</div>
-                        <span class="badge badge-active">${job.status || 'Active'}</span>
+                <div class="job-card" onclick="viewJobCandidates('${job.job_id}')">
+                    <div class="job-card-header">
+                        <div class="job-title">${job.job_title}</div>
+                        <div class="job-id">${job.job_id}</div>
+                        <span class="badge ${job.status === 'Active' ? 'badge-active' : 'badge-closed'}">
+                            ${job.status || 'Active'}
+                        </span>
                     </div>
                     
                     <div style="margin: 15px 0; color: #666;">
-                        📍 ${job.location || 'N/A'} • 🏢 ${job.department || 'N/A'} • 💼 ${job.job_type || 'Full-time'}
+                        📍 ${job.location} • 🏢 ${job.department} • 💼 ${job.job_type}
                     </div>
                     
                     <div class="job-stats">
@@ -587,8 +661,11 @@
                         </div>
                     </div>
                     
-                    <div style="margin-top: 15px;">
-                        <button class="btn-small" onclick="copyJobLink('${job.job_id}')">
+                    <div class="job-actions" onclick="event.stopPropagation()">
+                        <button class="btn-small" onclick="viewJobCandidates('${job.job_id}')">
+                            👥 View Candidates
+                        </button>
+                        <button class="btn-small btn-secondary" onclick="copyJobLink('${job.job_id}')">
                             🔗 Copy Link
                         </button>
                     </div>
@@ -596,16 +673,136 @@
             `).join('');
         }
         
-        function copyJobLink(jobId) {
-            const link = `https://grover8.github.io/hr-recruitment-system/job_portal.html?job_id=${jobId}`;
-            navigator.clipboard.writeText(link).then(() => {
-                alert('Job link copied to clipboard!');
-            });
+        // View candidates for a job
+        function viewJobCandidates(jobId) {
+            // Switch to search tab and filter by job ID
+            document.getElementById('searchJobId').value = jobId;
+            showTab('search');
+            document.getElementById('searchForm').dispatchEvent(new Event('submit'));
         }
         
-        // Auto-load jobs on page load
+        // Copy job link
+        function copyJobLink(jobId) {
+            const link = `https://grover8.github.io/hr-recruitment-system/job_portal.html?job_id=${jobId}`;
+            navigator.clipboard.writeText(link);
+            alert('Job link copied! Share this with candidates.');
+        }
+        
+        // Create job
+        document.getElementById('jobForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const loading = document.getElementById('createJobLoading');
+            const message = document.getElementById('createJobMessage');
+            
+            loading.style.display = 'block';
+            message.style.display = 'none';
+            
+            const formData = new FormData(e.target);
+            const jobData = Object.fromEntries(formData);
+            
+            try {
+                const response = await fetch(WEBHOOKS.createJob, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(jobData)
+                });
+                
+                const data = await response.json();
+                
+                loading.style.display = 'none';
+                
+                if (data.success) {
+                    message.className = 'message success';
+                    message.innerHTML = `✅ Job created! ID: ${data.job_id}`;
+                    e.target.reset();
+                } else {
+                    throw new Error(data.message);
+                }
+                
+                message.style.display = 'block';
+            } catch (error) {
+                loading.style.display = 'none';
+                message.className = 'message error';
+                message.textContent = 'Error: ' + error.message;
+                message.style.display = 'block';
+            }
+        });
+        
+        // Search candidates
+        document.getElementById('searchForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const loading = document.getElementById('searchLoading');
+            const message = document.getElementById('searchMessage');
+            const results = document.getElementById('searchResults');
+            const tbody = document.getElementById('searchTableBody');
+            
+            loading.style.display = 'block';
+            message.style.display = 'none';
+            results.style.display = 'none';
+            
+            const formData = new FormData(e.target);
+            const searchParams = Object.fromEntries(formData);
+            
+            try {
+                const response = await fetch(WEBHOOKS.searchCandidates, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(searchParams)
+                });
+                
+                const data = await response.json();
+                
+                loading.style.display = 'none';
+                
+                if (data.results && data.results.length > 0) {
+                    tbody.innerHTML = data.results.map(c => `
+                        <tr>
+                            <td>${c.name}</td>
+                            <td>${c.email}</td>
+                            <td>${c.phone}</td>
+                            <td>${c.location}</td>
+                            <td>${c.total_experience} yrs</td>
+                            <td>${(c.skills || '').substring(0, 50)}...</td>
+                            <td>${c.status}</td>
+                            <td>${c.applied_for_job_id || 'N/A'}</td>
+                        </tr>
+                    `).join('');
+                    results.style.display = 'block';
+                } else {
+                    message.className = 'message info';
+                    message.textContent = 'No candidates found';
+                    message.style.display = 'block';
+                }
+            } catch (error) {
+                loading.style.display = 'none';
+                message.className = 'message error';
+                message.textContent = 'Error: ' + error.message;
+                message.style.display = 'block';
+            }
+        });
+        
+        // Populate job filter dropdown
+        async function populateJobFilter() {
+            try {
+                const response = await fetch(WEBHOOKS.getAllJobs);
+                const data = await response.json();
+                
+                if (data.jobs) {
+                    const select = document.getElementById('searchJobId');
+                    select.innerHTML = '<option value="">All Jobs</option>' +
+                        data.jobs.map(job => 
+                            `<option value="${job.job_id}">${job.job_title} (${job.job_id})</option>`
+                        ).join('');
+                }
+            } catch (error) {
+                console.error('Error loading jobs for filter:', error);
+            }
+        }
+        
+        // Load jobs on page load
         window.addEventListener('load', () => {
-            log('Dashboard loaded');
             loadAllJobs();
         });
     </script>
