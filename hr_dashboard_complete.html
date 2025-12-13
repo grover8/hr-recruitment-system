@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -353,6 +354,38 @@
             background: #f8d7da;
             color: #721c24;
         }
+        .export-panel {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+    border: 2px solid #e0e0e0;
+}
+
+.column-selector {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.column-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.column-checkbox input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
     </style>
 </head>
 <body>
@@ -469,63 +502,122 @@
         <div id="createJobMessage" class="message"></div>
     </div>
     
+    
     <!-- SEARCH CANDIDATES TAB -->
-    <div id="search-tab" class="content">
-        <h2 style="margin-bottom: 20px;">🔍 Search Candidates</h2>
-        
-        <form id="searchForm">
-            <div class="row-3">
-                <div class="form-group">
-                    <label>Job ID</label>
-                    <select id="searchJobId" name="job_id">
-                        <option value="">All Jobs</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label>Location</label>
-                    <input type="text" name="location" placeholder="e.g., Mumbai">
-                </div>
-                
-                <div class="form-group">
-                    <label>Status</label>
-                    <select name="status">
-                        <option value="">All</option>
-                        <option value="new">New</option>
-                        <option value="screening">Screening</option>
-                        <option value="interview">Interview</option>
-                        <option value="selected">Selected</option>
-                        <option value="rejected">Rejected</option>
-                    </select>
-                </div>
+<div id="search-tab" class="content">
+    <h2 style="margin-bottom: 20px;">🔍 Search & Export Candidates</h2>
+    
+    <form id="searchForm">
+        <div class="row-3">
+            <div class="form-group">
+                <label>Job ID</label>
+                <select id="searchJobId" name="job_id">
+                    <option value="">All Jobs</option>
+                </select>
             </div>
             
-            <div class="row">
-                <div class="form-group">
-                    <label>Skills</label>
-                    <input type="text" name="skills" placeholder="e.g., React, Python">
-                </div>
-                
-                <div class="form-group">
-                    <label>Qualification</label>
-                    <input type="text" name="qualification" placeholder="e.g., B.Tech">
-                </div>
+            <div class="form-group">
+                <label>Location</label>
+                <input type="text" name="location" placeholder="e.g., Mumbai">
             </div>
             
-            <button type="submit">Search Candidates</button>
-        </form>
-        
-        <div class="loading" id="searchLoading">
-            <div class="spinner"></div>
-            <p>Searching...</p>
+            <div class="form-group">
+                <label>Status</label>
+                <select name="status">
+                    <option value="">All</option>
+                    <option value="new">New</option>
+                    <option value="screening">Screening</option>
+                    <option value="interview">Interview</option>
+                    <option value="selected">Selected</option>
+                    <option value="rejected">Rejected</option>
+                </select>
+            </div>
         </div>
         
-        <div id="searchMessage" class="message"></div>
+        <div class="row">
+            <div class="form-group">
+                <label>Skills</label>
+                <input type="text" name="skills" placeholder="e.g., React, Python">
+            </div>
+            
+            <div class="form-group">
+                <label>Qualification</label>
+                <input type="text" name="qualification" placeholder="e.g., B.Tech">
+            </div>
+        </div>
         
-        <div class="table-container" id="searchResults" style="display: none;">
+        <button type="submit">Search Candidates</button>
+    </form>
+    
+    <div class="loading" id="searchLoading">
+        <div class="spinner"></div>
+        <p>Searching...</p>
+    </div>
+    
+    <div id="searchMessage" class="message"></div>
+    
+    <div id="searchResults" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin: 20px 0;">
+            <h3>Found: <span id="resultsCount">0</span> candidates</h3>
+            <button onclick="toggleExportPanel()" class="btn-success">📥 Export Options</button>
+        </div>
+        
+        <!-- Export Panel -->
+        <div class="export-panel" id="exportPanel" style="display: none;">
+            <h3 style="margin-bottom: 15px;">📥 Choose Columns to Export</h3>
+            
+            <div class="column-selector">
+                <div class="column-checkbox">
+                    <input type="checkbox" id="col_name" value="name" checked>
+                    <label for="col_name">Name</label>
+                </div>
+                <div class="column-checkbox">
+                    <input type="checkbox" id="col_email" value="email" checked>
+                    <label for="col_email">Email</label>
+                </div>
+                <div class="column-checkbox">
+                    <input type="checkbox" id="col_phone" value="phone" checked>
+                    <label for="col_phone">Phone</label>
+                </div>
+                <div class="column-checkbox">
+                    <input type="checkbox" id="col_location" value="location" checked>
+                    <label for="col_location">Location</label>
+                </div>
+                <div class="column-checkbox">
+                    <input type="checkbox" id="col_experience" value="total_experience" checked>
+                    <label for="col_experience">Experience</label>
+                </div>
+                <div class="column-checkbox">
+                    <input type="checkbox" id="col_qualification" value="qualification" checked>
+                    <label for="col_qualification">Qualification</label>
+                </div>
+                <div class="column-checkbox">
+                    <input type="checkbox" id="col_skills" value="skills" checked>
+                    <label for="col_skills">Skills</label>
+                </div>
+                <div class="column-checkbox">
+                    <input type="checkbox" id="col_status" value="status" checked>
+                    <label for="col_status">Status</label>
+                </div>
+                <div class="column-checkbox">
+                    <input type="checkbox" id="col_job_id" value="applied_for_job_id" checked>
+                    <label for="col_job_id">Applied Job ID</label>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button onclick="exportToCSV()">📄 Export to CSV</button>
+                <button onclick="exportToExcel()">📊 Export to Excel</button>
+                <button onclick="selectAllColumns()" class="btn-secondary">☑️ Select All</button>
+                <button onclick="deselectAllColumns()" class="btn-secondary">☐ Deselect All</button>
+            </div>
+        </div>
+        
+        <div class="table-container">
             <table>
                 <thead>
                     <tr>
+                        <th><input type="checkbox" id="selectAll" onchange="toggleSelectAll()"></th>
                         <th>Name</th>
                         <th>Email</th>
                         <th>Phone</th>
@@ -540,6 +632,7 @@
             </table>
         </div>
     </div>
+</div>
     
     <!-- LINKS TAB -->
     <div id="links-tab" class="content">
@@ -805,6 +898,162 @@
         window.addEventListener('load', () => {
             loadAllJobs();
         });
+        let searchResults = [];
+
+// Update the search form handler to store results
+const originalSearchHandler = document.getElementById('searchForm').onsubmit;
+document.getElementById('searchForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const loading = document.getElementById('searchLoading');
+    const message = document.getElementById('searchMessage');
+    const results = document.getElementById('searchResults');
+    const tbody = document.getElementById('searchTableBody');
+    
+    loading.style.display = 'block';
+    message.style.display = 'none';
+    results.style.display = 'none';
+    
+    const formData = new FormData(e.target);
+    const searchParams = Object.fromEntries(formData);
+    
+    try {
+        const response = await fetch(WEBHOOKS.searchCandidates, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(searchParams)
+        });
+        
+        const data = await response.json();
+        
+        loading.style.display = 'none';
+        
+        if (data.results && data.results.length > 0) {
+            searchResults = data.results; // Store for export
+            document.getElementById('resultsCount').textContent = data.results.length;
+            
+            tbody.innerHTML = data.results.map((c, index) => `
+                <tr>
+                    <td><input type="checkbox" class="candidate-checkbox" data-index="${index}"></td>
+                    <td>${c.name}</td>
+                    <td>${c.email}</td>
+                    <td>${c.phone}</td>
+                    <td>${c.location}</td>
+                    <td>${c.total_experience} yrs</td>
+                    <td>${(c.skills || '').substring(0, 50)}...</td>
+                    <td>${c.status}</td>
+                    <td>${c.applied_for_job_id || 'N/A'}</td>
+                </tr>
+            `).join('');
+            results.style.display = 'block';
+        } else {
+            message.className = 'message info';
+            message.textContent = 'No candidates found';
+            message.style.display = 'block';
+        }
+    } catch (error) {
+        loading.style.display = 'none';
+        message.className = 'message error';
+        message.textContent = 'Error: ' + error.message;
+        message.style.display = 'block';
+    }
+});
+
+function toggleExportPanel() {
+    const panel = document.getElementById('exportPanel');
+    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+}
+
+function selectAllColumns() {
+    document.querySelectorAll('.column-checkbox input[type="checkbox"]').forEach(cb => cb.checked = true);
+}
+
+function deselectAllColumns() {
+    document.querySelectorAll('.column-checkbox input[type="checkbox"]').forEach(cb => cb.checked = false);
+}
+
+function toggleSelectAll() {
+    const checked = document.getElementById('selectAll').checked;
+    document.querySelectorAll('.candidate-checkbox').forEach(cb => cb.checked = checked);
+}
+
+function getSelectedColumns() {
+    const selected = [];
+    document.querySelectorAll('.column-checkbox input[type="checkbox"]:checked').forEach(cb => {
+        selected.push(cb.value);
+    });
+    return selected;
+}
+
+function getSelectedCandidates() {
+    const selected = [];
+    document.querySelectorAll('.candidate-checkbox:checked').forEach(cb => {
+        const index = parseInt(cb.dataset.index);
+        selected.push(searchResults[index]);
+    });
+    return selected.length > 0 ? selected : searchResults;
+}
+
+function exportToCSV() {
+    const columns = getSelectedColumns();
+    const candidates = getSelectedCandidates();
+    
+    if (candidates.length === 0) {
+        alert('No candidates to export!');
+        return;
+    }
+    
+    // Create CSV header
+    const header = columns.join(',');
+    
+    // Create CSV rows
+    const rows = candidates.map(candidate => {
+        return columns.map(col => {
+            const value = candidate[col] || '';
+            return `"${String(value).replace(/"/g, '""')}"`;
+        }).join(',');
+    });
+    
+    const csv = [header, ...rows].join('\n');
+    
+    // Download CSV
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `candidates_${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+    
+    alert(`✅ Exported ${candidates.length} candidates to CSV!`);
+}
+
+function exportToExcel() {
+    const columns = getSelectedColumns();
+    const candidates = getSelectedCandidates();
+    
+    if (candidates.length === 0) {
+        alert('No candidates to export!');
+        return;
+    }
+    
+    // Prepare data
+    const data = candidates.map(candidate => {
+        const row = {};
+        columns.forEach(col => {
+            row[col] = candidate[col] || '';
+        });
+        return row;
+    });
+    
+    // Create workbook
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Candidates');
+    
+    // Download Excel
+    XLSX.writeFile(wb, `candidates_${new Date().toISOString().split('T')[0]}.xlsx`);
+    
+    alert(`✅ Exported ${candidates.length} candidates to Excel!`);
+}
     </script>
 </body>
 </html>
