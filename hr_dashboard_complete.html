@@ -414,93 +414,96 @@
         
         <div class="jobs-grid" id="jobsGrid"></div>
     </div>
-    
     <!-- CREATE JOB TAB -->
-    <div id="create-job-tab" class="content">
-        <h2 style="margin-bottom: 20px;">➕ Create New Job Posting</h2>
-        
-        <form id="jobForm">
-            <div class="form-group">
-                <label>Job Title <span class="required">*</span></label>
-                <input type="text" name="job_title" required placeholder="e.g., Senior React Developer">
-            </div>
-            
-            <div class="form-group">
-                <label>Job Description <span class="required">*</span></label>
-                <textarea name="job_description" required placeholder="Describe the role..."></textarea>
-            </div>
-            
-            <div class="row-3">
-                <div class="form-group">
-                    <label>Location <span class="required">*</span></label>
-                    <input type="text" name="location" required placeholder="e.g., Delhi">
-                </div>
-                
-                <div class="form-group">
-                    <label>Department <span class="required">*</span></label>
-                    <input type="text" name="department" required placeholder="e.g., Engineering">
-                </div>
-                
-                <div class="form-group">
-                    <label>Job Type <span class="required">*</span></label>
-                    <select name="job_type" required>
-                        <option value="Full-time">Full-time</option>
-                        <option value="Part-time">Part-time</option>
-                        <option value="Contract">Contract</option>
-                        <option value="Internship">Internship</option>
-                    </select>
-                </div>
-            </div>
-            
-            <div class="row-3">
-                <div class="form-group">
-                    <label>Min Experience (years)</label>
-                    <input type="number" name="min_experience" value="0" min="0">
-                </div>
-                
-                <div class="form-group">
-                    <label>Max Experience (years)</label>
-                    <input type="number" name="max_experience" value="15" min="0">
-                </div>
-                
-                <div class="form-group">
-                    <label>Number of Openings</label>
-                    <input type="number" name="openings" value="1" min="1">
-                </div>
-            </div>
-            
-            <div class="row">
-                <div class="form-group">
-                    <label>Salary Range</label>
-                    <input type="text" name="salary_range" placeholder="e.g., 15-20 LPA">
-                </div>
-                
-                <div class="form-group">
-                    <label>Qualification</label>
-                    <input type="text" name="qualification" placeholder="e.g., B.Tech in CS">
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label>Required Skills (comma-separated)</label>
-                <input type="text" name="required_skills" placeholder="e.g., React, Node.js, MongoDB">
-            </div>
-            
-            <div class="form-group">
-                <label>Key Responsibilities</label>
-                <textarea name="responsibilities" placeholder="List main responsibilities..."></textarea>
-            </div>
-            
-            <button type="submit">Create Job Posting</button>
-        </form>
-        
-        <div class="loading" id="createJobLoading">
-            <div class="spinner"></div>
-            <p>Creating job...</p>
+<div id="create-job-tab" class="content">
+    <h2 style="margin-bottom: 20px;">➕ Create New Job Posting</h2>
+    
+    <form id="jobForm">
+        <div class="form-group">
+            <label>Job Title <span class="required">*</span></label>
+            <input type="text" name="job_title" required placeholder="e.g., Senior React Developer">
         </div>
         
-        <div id="createJobMessage" class="message"></div>
+        <div class="form-group">
+            <label>Job Description <span class="required">*</span></label>
+            <textarea name="job_description" required placeholder="Describe the role..."></textarea>
+        </div>
+        
+        <div class="row-3">
+            <div class="form-group">
+                <label>Location <span class="required">*</span></label>
+                <input type="text" name="location" required placeholder="e.g., Delhi">
+            </div>
+            
+            <div class="form-group">
+                <label>Department <span class="required">*</span></label>
+                <input type="text" name="department" required placeholder="e.g., Engineering">
+            </div>
+            
+            <div class="form-group">
+                <label>Job Type <span class="required">*</span></label>
+                <select name="job_type" required>
+                    <option value="Full-time">Full-time</option>
+                    <option value="Part-time">Part-time</option>
+                    <option value="Contract">Contract</option>
+                    <option value="Internship">Internship</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="row-3">
+            <div class="form-group">
+                <label>Min Experience (years) <span class="required">*</span></label>
+                <input type="number" name="min_experience" value="0" min="0" max="50" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Max Experience (years) <span class="required">*</span></label>
+                <input type="number" name="max_experience" value="10" min="0" max="50" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Number of Openings <span class="required">*</span></label>
+                <input type="number" name="openings" value="1" min="1" max="100" required>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="form-group">
+                <label>Salary Range</label>
+                <input type="text" name="salary_range" placeholder="e.g., 15-20 LPA">
+            </div>
+            
+            <div class="form-group">
+                <label>Qualification <span class="required">*</span></label>
+                <input type="text" name="qualification" required placeholder="e.g., B.Tech in CS, MBA">
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label>Required Skills (comma-separated) <span class="required">*</span></label>
+            <input type="text" name="required_skills" required placeholder="e.g., React, Node.js, MongoDB, AWS">
+        </div>
+        
+        <div class="form-group">
+            <label>Key Responsibilities <span class="required">*</span></label>
+            <textarea name="responsibilities" required placeholder="List main responsibilities...
+Example:
+- Design and develop scalable web applications
+- Collaborate with cross-functional teams
+- Mentor junior developers"></textarea>
+        </div>
+        
+        <button type="submit">Create Job Posting</button>
+    </form>
+    
+    <div class="loading" id="createJobLoading">
+        <div class="spinner"></div>
+        <p>Creating job...</p>
     </div>
+    
+    <div id="createJobMessage" class="message"></div>
+</div>
     
     
     <!-- SEARCH CANDIDATES TAB -->
